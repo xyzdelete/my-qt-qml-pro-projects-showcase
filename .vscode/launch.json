@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Qt: C++ debugger (cppvsdbg)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "stopAtEntry": false,
+      "cwd": "${command:cmake.launchTargetDirectory}",
+      "visualizerFile": "${command:qt-cpp.natvis}",
+      "args": [
+        "-qmljsdebugger=host:localhost,port:${command:qt-qml.debugPort},block,services:DebugMessages,QmlDebugger,V8Debugger"
+      ],
+    },
+    {
+      "name": "Qt: QML debugger",
+      "type": "qml",
+      "request": "attach",
+      "host": "localhost",
+      "port": "${command:qt-qml.debugPort}",
+      "buildDirs": [
+        "${command:cmake.buildDirectory}"
+      ]
+    },
+    {
+      "name": "C++ debugger (cppvsdbg)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "cwd": "${command:cmake.launchTargetDirectory}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "C++ debugger (lldb)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "cwd": "${command:cmake.launchTargetDirectory}",
+      "terminal": "integrated"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Qt: C++ and QML debuggers (Windows)",
+      "configurations": [
+        "Qt: C++ debugger (cppvsdbg)",
+        "Qt: QML debugger"
+      ],
+      "preLaunchTask": "Qt: Acquire Port"
+    }
+  ]
+}
