@@ -1,0 +1,6 @@
+libb2 is provided by the BLAKE2 project.
+
+This overlay package is an empty iOS compatibility package. The actual libb2
+library is not built because Qt does not use its libb2 input on iOS.
+
+Upstream project: https://github.com/BLAKE2/libb2
