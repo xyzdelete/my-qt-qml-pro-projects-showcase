@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E3C2C"></stop>
+      <stop offset="52%" stop-color="#12281E"></stop>
+      <stop offset="100%" stop-color="#0A130F"></stop>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.30" cy="0.22" r="0.95">
+      <stop offset="0%" stop-color="#6FE6A8" stop-opacity="0.22"></stop>
+      <stop offset="55%" stop-color="#6FE6A8" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="shade" cx="0.82" cy="0.88" r="0.85">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.38"></stop>
+      <stop offset="64%" stop-color="#000000" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.42">
+      <stop offset="0%" stop-color="#54D796" stop-opacity="0.28"></stop>
+      <stop offset="100%" stop-color="#54D796" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B6F2D2"></stop>
+      <stop offset="100%" stop-color="#4FC489"></stop>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#bg)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#shade)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#glow)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#halo)"></rect>
+
+  
+  <g transform="translate(0,10)" fill="none" stroke="#000000" stroke-opacity="0.28" stroke-width="44" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 372,332 C 335,332 343,420 337,470 C 332,503 321,512 294,512 C 321,512 332,521 337,554 C 343,604 335,692 372,692"></path>
+    <path d="M 652,332 C 689,332 681,420 687,470 C 692,503 703,512 730,512 C 703,512 692,521 687,554 C 681,604 689,692 652,692"></path>
+    <path d="M 412,464 L 612,464 M 612,464 L 581,438 M 612,464 L 581,490"></path>
+    <path d="M 612,560 L 412,560 M 412,560 L 443,534 M 412,560 L 443,586"></path>
+  </g>
+
+  
+  <g fill="none" stroke="url(#ink)" stroke-width="44" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 372,332 C 335,332 343,420 337,470 C 332,503 321,512 294,512 C 321,512 332,521 337,554 C 343,604 335,692 372,692"></path>
+    <path d="M 652,332 C 689,332 681,420 687,470 C 692,503 703,512 730,512 C 703,512 692,521 687,554 C 681,604 689,692 652,692"></path>
+  </g>
+  <g fill="none" stroke="url(#ink)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 412,464 L 612,464 M 612,464 L 581,438 M 612,464 L 581,490"></path>
+    <path d="M 612,560 L 412,560 M 412,560 L 443,534 M 412,560 L 443,586"></path>
+  </g>
+</svg>
