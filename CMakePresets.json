@@ -1,0 +1,447 @@
+{
+  "version": 10,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "$penv{BUILD_ROOT}/${presetName}",
+      "installDir": "$penv{BUILD_ROOT}/${presetName}/install",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_TOOLCHAIN_FILE": "$penv{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPERIMENTAL_CXX_IMPORT_STD": "f35a9ac6-8463-4d38-8eec-5d6008153e7d",
+        "CMAKE_CXX_MODULE_STD": "ON",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "ON",
+        "QT_QML_GENERATE_QMLLS_INI": "ON",
+        "VCPKG_INSTALLED_DIR": "$penv{VCPKG_INSTALLED_ROOT}",
+        "VCPKG_INSTALL_OPTIONS": "--x-buildtrees-root=$penv{VCPKG_BUILDTREES_ROOT}"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-x64-windows-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "VCPKG_HOST_TRIPLET": "x64-windows-static-release"
+      },
+      "vendor": {
+        "qt-cpp": {
+          "VSCODE_QT_QTPATHS_EXE": "C:/vcpkg-installed/x64-windows-static-release/tools/Qt6/bin/qtpaths.exe"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "VCPKG_HOST_TRIPLET": "arm64-windows-static-release"
+      },
+      "vendor": {
+        "qt-cpp": {
+          "VSCODE_QT_QTPATHS_EXE": "C:/vcpkg-installed/arm64-windows-static-release/tools/Qt6/bin/qtpaths.exe"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-x64-windows-static",
+      "inherits": "host-x64-windows-target-x64-windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+        "QT_NO_QTPATHS_DEPLOYMENT_WARNING": "ON"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-x64-windows-static-release",
+      "inherits": "host-x64-windows-target-x64-windows-static",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-release"
+      }
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-static",
+      "inherits": "host-arm64-windows-target-arm64-windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-static",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+        "QT_NO_QTPATHS_DEPLOYMENT_WARNING": "ON"
+      }
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-static-release",
+      "inherits": "host-arm64-windows-target-arm64-windows-static",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-static-release"
+      }
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "VCPKG_HOST_TRIPLET": "x64-linux-release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "VCPKG_HOST_TRIPLET": "arm64-linux-release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux",
+      "inherits": "host-x64-linux-target-x64-linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      }
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux-release",
+      "inherits": "host-x64-linux-target-x64-linux",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-release"
+      }
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux",
+      "inherits": "host-arm64-linux-target-arm64-linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux-release",
+      "inherits": "host-arm64-linux-target-arm64-linux",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-release"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "VCPKG_HOST_TRIPLET": "arm64-osx-release",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
+        "CMAKE_CXX_MODULE_STD": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx",
+      "inherits": "host-arm64-osx-target-arm64-osx-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-osx"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx-release",
+      "inherits": "host-arm64-osx-target-arm64-osx",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-release"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios",
+      "inherits": "host-arm64-osx-target-arm64-osx-base",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-ios",
+        "VCPKG_HOST_TRIPLET": "arm64-osx-release",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/tools/vcpkg-custom-ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/tools/vcpkg-custom-triplets",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "18.0"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-release",
+      "inherits": "host-arm64-osx-target-arm64-ios",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-ios-release"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-simulator",
+      "inherits": "host-arm64-osx-target-arm64-ios",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-ios-simulator",
+        "VCPKG_HOST_TRIPLET": "arm64-osx-release",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/tools/vcpkg-custom-ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/tools/vcpkg-custom-triplets",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphonesimulator",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "18.0"
+      }
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-simulator-release",
+      "inherits": "host-arm64-osx-target-arm64-ios-simulator",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-ios-simulator-release"
+      }
+    },
+    {
+      "name": "android-base",
+      "hidden": true,
+      "inherits": "base",
+      "environment": {
+        "JAVA_HOME": "$penv{JAVA_HOME}",
+        "ANDROID_HOME": "$penv{ANDROID_HOME}",
+        "ANDROID_NDK_HOME": "$penv{ANDROID_NDK_HOME}",
+        "VCPKG_KEEP_ENV_VARS": "JAVA_HOME;ANDROID_HOME;ANDROID_NDK_HOME"
+      },
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "Android",
+        "CMAKE_SYSTEM_VERSION": "35",
+        "ANDROID_SDK_ROOT": "$env{ANDROID_HOME}",
+        "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK_HOME}",
+        "ANDROID_PLATFORM": "android-35",
+        "ANDROID_MIN_SDK_VERSION": "28",
+        "ANDROID_TARGET_SDK_VERSION": "35",
+        "ANDROID_COMPILE_SDK_VERSION": "36",
+        "CMAKE_ANDROID_STL_TYPE": "c++_static",
+        "CMAKE_POSITION_INDEPENDENT_CODE": "ON",
+        "CMAKE_CXX_MODULE_STD": "OFF"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android-base",
+      "inherits": "android-base",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": "x64-windows-static-release",
+        "ANDROID_NDK_HOST_SYSTEM_NAME": "windows-x86_64"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android",
+      "inherits": "host-x64-windows-target-arm64-android-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-android",
+        "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android-release",
+      "inherits": "host-x64-windows-target-arm64-android",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-android-release"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-wasm32-emscripten",
+      "inherits": "base",
+      "cacheVariables": {
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$penv{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-pthread",
+        "VCPKG_HOST_TRIPLET": "x64-windows-static-release",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/tools/vcpkg-custom-triplets",
+        "CMAKE_CXX_MODULE_STD": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "host-x64-windows-target-wasm32-emscripten-release",
+      "inherits": "host-x64-windows-target-wasm32-emscripten",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-pthread-release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "host-x64-windows-target-x64-windows-static-release",
+      "configurePreset": "host-x64-windows-target-x64-windows-static",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-windows-target-x64-windows-static-debug",
+      "configurePreset": "host-x64-windows-target-x64-windows-static",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-x64-windows-target-x64-windows-static-release-build",
+      "configurePreset": "host-x64-windows-target-x64-windows-static-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-static-release",
+      "configurePreset": "host-arm64-windows-target-arm64-windows-static",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-static-debug",
+      "configurePreset": "host-arm64-windows-target-arm64-windows-static",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-arm64-windows-target-arm64-windows-static-release-build",
+      "configurePreset": "host-arm64-windows-target-arm64-windows-static-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux-release",
+      "configurePreset": "host-x64-linux-target-x64-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux-debug",
+      "configurePreset": "host-x64-linux-target-x64-linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-x64-linux-target-x64-linux-release-build",
+      "configurePreset": "host-x64-linux-target-x64-linux-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux-release",
+      "configurePreset": "host-arm64-linux-target-arm64-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux-debug",
+      "configurePreset": "host-arm64-linux-target-arm64-linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-arm64-linux-target-arm64-linux-release-build",
+      "configurePreset": "host-arm64-linux-target-arm64-linux-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx-release",
+      "configurePreset": "host-arm64-osx-target-arm64-osx",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx-debug",
+      "configurePreset": "host-arm64-osx-target-arm64-osx",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-osx-release-build",
+      "configurePreset": "host-arm64-osx-target-arm64-osx-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-release",
+      "configurePreset": "host-arm64-osx-target-arm64-ios",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-release-build",
+      "configurePreset": "host-arm64-osx-target-arm64-ios-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-debug",
+      "configurePreset": "host-arm64-osx-target-arm64-ios",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-simulator-release",
+      "configurePreset": "host-arm64-osx-target-arm64-ios-simulator",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-simulator-release-build",
+      "configurePreset": "host-arm64-osx-target-arm64-ios-simulator-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-arm64-osx-target-arm64-ios-simulator-debug",
+      "configurePreset": "host-arm64-osx-target-arm64-ios-simulator",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android-release",
+      "configurePreset": "host-x64-windows-target-arm64-android",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android-debug",
+      "configurePreset": "host-x64-windows-target-arm64-android",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-x64-windows-target-arm64-android-release-build",
+      "configurePreset": "host-x64-windows-target-arm64-android-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-windows-target-wasm32-emscripten-release",
+      "configurePreset": "host-x64-windows-target-wasm32-emscripten",
+      "configuration": "Release"
+    },
+    {
+      "name": "host-x64-windows-target-wasm32-emscripten-debug",
+      "configurePreset": "host-x64-windows-target-wasm32-emscripten",
+      "configuration": "Debug"
+    },
+    {
+      "name": "host-x64-windows-target-wasm32-emscripten-release-build",
+      "configurePreset": "host-x64-windows-target-wasm32-emscripten-release",
+      "configuration": "Release"
+    }
+  ]
+}
