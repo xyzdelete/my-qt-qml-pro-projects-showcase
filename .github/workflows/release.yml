@@ -1,0 +1,764 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*-v*-release'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VCPKG_BASELINE: 04a9d8e5212d01ee1dd9478eadd9caade4f8b0d4
+
+jobs:
+  host-x64-windows-target-x64-windows-static-release:
+    name: host-x64-windows-target-x64-windows-static-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - name: Install NSIS and verify packaging tools
+        run: |
+          choco --version
+          choco install nsis --no-progress --yes
+          $nsisPath = "${env:ProgramFiles(x86)}/NSIS"
+          if (-not (Test-Path "$nsisPath/makensis.exe")) { throw "NSIS was not found at $nsisPath" }
+          $env:Path = "$nsisPath;$env:Path"
+          $nsisPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          makensis /VERSION
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Configure and build
+        env:
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          $env:BUILD_ROOT = "D:/build"
+          cmake --preset host-x64-windows-target-x64-windows-static-release
+          cmake --build --preset host-x64-windows-target-x64-windows-static-release-build --parallel
+      - name: Package NSIS and ZIP
+        run: |
+          $build = "D:/build/host-x64-windows-target-x64-windows-static-release"
+          cmake --install $build --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-x64-windows-static-release
+          path: |
+            D:/build/host-x64-windows-target-x64-windows-static-release/*.zip
+            D:/build/host-x64-windows-target-x64-windows-static-release/*.exe
+          if-no-files-found: error
+
+  host-arm64-osx-target-arm64-osx-release:
+    name: host-arm64-osx-target-arm64-osx-release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Report Apple Clang compiler
+        run: |
+          clang --version
+          clang++ --version
+      - name: Install macOS build prerequisites
+        run: |
+          brew install autoconf autoconf-archive automake libtool ninja
+          libtool_bin="$(brew --prefix libtool)/libexec/gnubin"
+          export PATH="$libtool_bin:$PATH"
+          echo "$libtool_bin" >> "$GITHUB_PATH"
+          autoconf --version
+          automake --version
+          libtoolize --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-arm64-osx-target-arm64-osx-release
+          cmake --build --preset host-arm64-osx-target-arm64-osx-release-build --parallel
+      - name: Package DragNDrop and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-osx-release"
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - name: Sign macOS app and rebuild DMG
+        env:
+          APPLE_MACOS_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_MACOS_CERTIFICATE_P12_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_MACOS_SIGNING_IDENTITY: ${{ secrets.APPLE_MACOS_SIGNING_IDENTITY }}
+        run: |
+          set -euo pipefail
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-osx-release"
+
+          tgz=$(find "$build" -maxdepth 1 -type f -name "*.tar.gz" -print -quit)
+          test -f "$tgz"
+          echo "Found tarball: $tgz"
+
+          dmg=$(find "$build" -maxdepth 1 -type f -name "*.dmg" -print -quit)
+          test -f "$dmg"
+          echo "Found dmg: $dmg"
+          dmg_name=$(basename "$dmg")
+          volume_name="${dmg_name%.dmg}"
+
+          extract_dir="$RUNNER_TEMP/macos-package-extract"
+          rm -rf "$extract_dir"
+          mkdir -p "$extract_dir"
+          tar -xzf "$tgz" -C "$extract_dir"
+
+          app=$(find "$extract_dir" -type d -name "*.app" -print -quit)
+          test -d "$app"
+          echo "Found app bundle: $app"
+
+          # Directory that actually contains the .app (may be $extract_dir itself,
+          # or a wrapper folder CPack created, e.g. MyApp-1.0.0-Darwin/)
+          dmg_root="$(dirname "$app")"
+          echo "DMG/package root: $dmg_root"
+
+          if [[ -z "${APPLE_MACOS_CERTIFICATE_P12_BASE64:-}" || -z "${APPLE_CERTIFICATE_PASSWORD:-}" || -z "${APPLE_MACOS_SIGNING_IDENTITY:-}" ]]; then
+            echo "Apple macOS signing secrets are incomplete; leaving the app unsigned."
+            exit 0
+          fi
+
+          certificate="$RUNNER_TEMP/macos-signing.p12"
+          keychain="$RUNNER_TEMP/macos-signing.keychain-db"
+          printf '%s' "$APPLE_MACOS_CERTIFICATE_P12_BASE64" | base64 --decode > "$certificate"
+          security create-keychain -p "" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "" "$keychain"
+          security import "$certificate" -k "$keychain" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -d user -s "$keychain"
+          security default-keychain -s "$keychain"
+
+          codesign --deep --force --verbose --options runtime --timestamp \
+            --sign "$APPLE_MACOS_SIGNING_IDENTITY" "$app"
+          codesign --verify --deep --strict --verbose=2 "$app"
+
+          # Re-create the TGZ, preserving the full original extracted layout
+          # (whatever CPack originally put alongside the .app, wrapper folder included)
+          rm -f "$tgz"
+          tar -czf "$tgz" -C "$extract_dir" .
+
+          # Re-create the DMG from the directory that actually contains the .app,
+          # so the DMG root matches CPack's original layout instead of assuming one
+          rm -f "$dmg"
+          hdiutil create -volname "$volume_name" -srcfolder "$dmg_root" -ov -format UDZO "$dmg"
+      - name: Optionally notarize macOS DMG
+        env:
+          APPLE_NOTARY_KEY_ID: ${{ secrets.APPLE_NOTARY_KEY_ID }}
+          APPLE_NOTARY_ISSUER_ID: ${{ secrets.APPLE_NOTARY_ISSUER_ID }}
+          APPLE_NOTARY_PRIVATE_KEY_BASE64: ${{ secrets.APPLE_NOTARY_PRIVATE_KEY_BASE64 }}
+          APPLE_MACOS_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_MACOS_CERTIFICATE_P12_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_MACOS_SIGNING_IDENTITY: ${{ secrets.APPLE_MACOS_SIGNING_IDENTITY }}
+        run: |
+          set -euo pipefail
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-osx-release"
+          if [[ -z "${APPLE_NOTARY_KEY_ID:-}" || -z "${APPLE_NOTARY_ISSUER_ID:-}" || -z "${APPLE_NOTARY_PRIVATE_KEY_BASE64:-}" || -z "${APPLE_MACOS_CERTIFICATE_P12_BASE64:-}" || -z "${APPLE_CERTIFICATE_PASSWORD:-}" || -z "${APPLE_MACOS_SIGNING_IDENTITY:-}" ]]; then
+            echo "Apple signing or notarization secrets are incomplete; leaving the DMG unstapled."
+            exit 0
+          fi
+          key="$RUNNER_TEMP/apple-notary-key.p8"
+          printf '%s' "$APPLE_NOTARY_PRIVATE_KEY_BASE64" | base64 --decode > "$key"
+          dmg="$(find "$build" -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          if [[ -z "$dmg" ]]; then
+            echo "No macOS DMG was produced for notarization." >&2
+            exit 1
+          fi
+          xcrun notarytool submit "$dmg" --key "$key" \
+            --key-id "$APPLE_NOTARY_KEY_ID" \
+            --issuer "$APPLE_NOTARY_ISSUER_ID" --wait
+          xcrun stapler staple "$dmg"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-osx-release
+          path: |
+            ${{ runner.temp }}/build/host-arm64-osx-target-arm64-osx-release/*.dmg
+            ${{ runner.temp }}/build/host-arm64-osx-target-arm64-osx-release/*.tar.gz
+          if-no-files-found: error
+
+  host-arm64-osx-target-arm64-ios-simulator-release:
+    name: host-arm64-osx-target-arm64-ios-simulator-release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report Apple SDK and compiler
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-path
+          clang --version
+          clang++ --version
+      - name: Install iOS build prerequisites
+        run: |
+          brew install autoconf autoconf-archive automake libtool ninja
+          libtool_bin="$(brew --prefix libtool)/libexec/gnubin"
+          export PATH="$libtool_bin:$PATH"
+          echo "$libtool_bin" >> "$GITHUB_PATH"
+          autoconf --version
+          automake --version
+          libtoolize --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build unsigned simulator app
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-arm64-osx-target-arm64-ios-simulator-release
+          cmake --build --preset host-arm64-osx-target-arm64-ios-simulator-release-build --parallel
+      - name: Package simulator app
+        run: |
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-ios-simulator-release"
+          cmake --install "$build" --config Release
+          app=$(find "$build/install" -type d -name "*.app" -print -quit)
+          echo "Found app bundle: $app"
+          test -d "$app"
+          zip_path="$build/${{ github.ref_name }}-arm64-ios-simulator-release.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$app" "$zip_path"
+          echo "Created zip: $zip_path"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-ios-simulator-release
+          path: ${{ runner.temp }}/build/host-arm64-osx-target-arm64-ios-simulator-release/${{ github.ref_name }}-arm64-ios-simulator-release.zip
+          if-no-files-found: error
+
+  host-arm64-osx-target-arm64-ios-release:
+    name: host-arm64-osx-target-arm64-ios-release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report iOS SDK and compiler
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          clang --version
+          clang++ --version
+      - name: Install iOS build prerequisites
+        run: |
+          brew install autoconf autoconf-archive automake libtool ninja
+          libtool_bin="$(brew --prefix libtool)/libexec/gnubin"
+          export PATH="$libtool_bin:$PATH"
+          echo "$libtool_bin" >> "$GITHUB_PATH"
+          autoconf --version
+          automake --version
+          libtoolize --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure Xcode device project
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: cmake --preset host-arm64-osx-target-arm64-ios-release
+      - name: Archive device app and optionally export IPA
+        env:
+          APPLE_IOS_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_IOS_CERTIFICATE_P12_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_IOS_SIGNING_IDENTITY: ${{ secrets.APPLE_IOS_SIGNING_IDENTITY }}
+          APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          APPLE_IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_IOS_PROVISIONING_PROFILE_BASE64 }}
+          APPLE_IOS_EXPORT_METHOD: ${{ secrets.APPLE_IOS_EXPORT_METHOD }}
+        run: |
+          set -euo pipefail
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-ios-release"
+          archive="$build/${{ github.ref_name }}-arm64-ios-release.xcarchive"
+          certificate="$RUNNER_TEMP/ios-signing.p12"
+          keychain="$RUNNER_TEMP/ios-signing.keychain-db"
+          profile="$RUNNER_TEMP/ios-profile.mobileprovision"
+          profile_plist="$RUNNER_TEMP/ios-profile.plist"
+          signing_enabled=false
+
+          if [[ -n "${APPLE_IOS_CERTIFICATE_P12_BASE64:-}" && -n "${APPLE_CERTIFICATE_PASSWORD:-}" && -n "${APPLE_IOS_SIGNING_IDENTITY:-}" && -n "${APPLE_DEVELOPMENT_TEAM:-}" && -n "${APPLE_IOS_PROVISIONING_PROFILE_BASE64:-}" ]]; then
+            signing_enabled=true
+            printf '%s' "$APPLE_IOS_CERTIFICATE_P12_BASE64" | base64 --decode > "$certificate"
+            printf '%s' "$APPLE_IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$profile"
+            security create-keychain -p "" "$keychain"
+            security set-keychain-settings -lut 21600 "$keychain"
+            security unlock-keychain -p "" "$keychain"
+            security import "$certificate" -k "$keychain" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+            security list-keychains -d user -s "$keychain"
+            security default-keychain -s "$keychain"
+            mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+            security cms -D -i "$profile" -o "$profile_plist"
+            profile_uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_plist")"
+            profile_name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_plist")"
+            cp "$profile" "$HOME/Library/MobileDevice/Provisioning Profiles/$profile_uuid.mobileprovision"
+          else
+            echo "iOS signing secrets are incomplete; creating an unsigned device archive."
+          fi
+
+          xcode_project=$(find "$build" -maxdepth 1 -type d -name "*.xcodeproj" -print -quit)
+          test -d "$xcode_project"
+          echo "Found Xcode project: $xcode_project"
+          xcode_list_json="$(xcodebuild -project "$xcode_project" -list -json)"
+          IFS=$'\n' xcode_schemes=($(printf '%s' "$xcode_list_json" | python3 -c \
+            'import json, sys; print("\n".join(json.load(sys.stdin).get("project", {}).get("schemes", [])))'))
+          if [[ ${#xcode_schemes[@]} -ne 1 || -z "${xcode_schemes[0]}" ]]; then
+            echo "Expected exactly one Xcode scheme in $xcode_project, found ${#xcode_schemes[@]}." >&2
+            printf '%s\n' "${xcode_schemes[@]}" >&2
+            exit 1
+          fi
+          xcode_scheme="${xcode_schemes[0]}"
+          echo "Using Xcode project: $xcode_project"
+          echo "Using Xcode scheme: $xcode_scheme"
+          xcodebuild_args=(
+            -project "$xcode_project"
+            -scheme "$xcode_scheme"
+            -configuration Release
+            -sdk iphoneos
+            -destination "generic/platform=iOS"
+            -archivePath "$archive"
+          )
+          if [[ "$signing_enabled" == true ]]; then
+            xcodebuild_args+=(
+              DEVELOPMENT_TEAM="$APPLE_DEVELOPMENT_TEAM"
+              CODE_SIGN_STYLE=Manual
+              CODE_SIGN_IDENTITY="$APPLE_IOS_SIGNING_IDENTITY"
+              PROVISIONING_PROFILE_SPECIFIER="$profile_name"
+            )
+          else
+            xcodebuild_args+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO)
+          fi
+          xcodebuild "${xcodebuild_args[@]}" archive
+
+          mkdir -p "$build/release-artifacts"
+          ditto -c -k --sequesterRsrc --keepParent "$archive" \
+            "$build/release-artifacts/${{ github.ref_name }}-arm64-ios-release.xcarchive.zip"
+
+          if [[ "$signing_enabled" == true ]]; then
+            export_options="$RUNNER_TEMP/ios-export-options.plist"
+            export_method="${APPLE_IOS_EXPORT_METHOD:-development}"
+            app_name="${GITHUB_REF_NAME%%-*}"
+            echo "app_name=${app_name}"
+            bundle_identifier="com.github.xyzdelete.$app_name"
+            echo "bundle_identifier=${bundle_identifier}"
+            cat > "$export_options" <<EOF
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+              <key>method</key>
+              <string>$export_method</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>teamID</key>
+              <string>$APPLE_DEVELOPMENT_TEAM</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                <key>$bundle_identifier</key>
+                <string>$profile_name</string>
+              </dict>
+            </dict>
+            </plist>
+            EOF
+            xcodebuild -exportArchive -archivePath "$archive" \
+              -exportOptionsPlist "$export_options" \
+              -exportPath "$build/release-artifacts"
+            ipa=$(find "$build/release-artifacts" -maxdepth 1 -type f -name "*.ipa" -print -quit)
+            test -f "$ipa"
+            echo "Found ipa: $ipa"
+            mv "$ipa" "$build/release-artifacts/${{ github.ref_name }}-arm64-ios-release.ipa"
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-ios-release
+          path: ${{ runner.temp }}/build/host-arm64-osx-target-arm64-ios-release/release-artifacts/*
+          if-no-files-found: error
+
+  host-x64-linux-target-x64-linux-release:
+    name: host-x64-linux-target-x64-linux-release
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Install Linux tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes autoconf autoconf-archive automake build-essential curl file gcc g++ libegl1-mesa-dev libglu1-mesa-dev libice-dev libltdl-dev libsm-dev libtool libx11-xcb-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxrender-dev ninja-build patchelf '^libxcb.*-dev'
+      - name: Report GCC compiler
+        run: |
+          gcc --version
+          g++ --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-linux-target-x64-linux-release
+          cmake --build --preset host-x64-linux-target-x64-linux-release-build --parallel
+      - name: Package DEB and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-x64-linux-target-x64-linux-release"
+          cmake --install "$build" --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-x64-linux-release
+          path: |
+            ${{ runner.temp }}/build/host-x64-linux-target-x64-linux-release/*.deb
+            ${{ runner.temp }}/build/host-x64-linux-target-x64-linux-release/*.tar.gz
+          if-no-files-found: error
+
+  host-arm64-linux-target-arm64-linux-release:
+    name: host-arm64-linux-target-arm64-linux-release
+    runs-on: ubuntu-26.04-arm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Install Linux tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes autoconf autoconf-archive automake build-essential curl file gcc g++ libegl1-mesa-dev libglu1-mesa-dev libice-dev libltdl-dev libsm-dev libtool libx11-xcb-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxrender-dev ninja-build patchelf '^libxcb.*-dev'
+      - name: Report GCC compiler
+        run: |
+          gcc --version
+          g++ --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-arm64-linux-target-arm64-linux-release
+          cmake --build --preset host-arm64-linux-target-arm64-linux-release-build --parallel
+      - name: Package DEB and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-arm64-linux-target-arm64-linux-release"
+          cmake --install "$build" --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-linux-release
+          path: |
+            ${{ runner.temp }}/build/host-arm64-linux-target-arm64-linux-release/*.deb
+            ${{ runner.temp }}/build/host-arm64-linux-target-arm64-linux-release/*.tar.gz
+          if-no-files-found: error
+
+  host-x64-windows-target-arm64-android-release:
+    name: host-x64-windows-target-arm64-android-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK and NDK
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.3.13750724"
+          $androidNdkHome = (Join-Path $env:ANDROID_HOME "ndk\27.3.13750724").Replace("\", "/")
+          "ANDROID_NDK_HOME=$androidNdkHome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          java -version
+          sdkmanager --version
+          adb version
+          & "$env:ANDROID_NDK_HOME/ndk-build.cmd" --version
+      - name: Verify Android APK signing tools
+        run: |
+          $buildToolsDir = Join-Path $env:ANDROID_HOME "build-tools\35.0.0"
+          $zipalign = Join-Path $buildToolsDir "zipalign.exe"
+          $apksigner = Join-Path $buildToolsDir "apksigner.bat"
+          if (-not (Test-Path $zipalign -PathType Leaf)) { throw "zipalign was not found at $zipalign" }
+          if (-not (Test-Path $apksigner -PathType Leaf)) { throw "apksigner was not found at $apksigner" }
+          $buildToolsDir.Replace("\", "/") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Output "zipalign: $zipalign"
+          Write-Output "zipalign file version: $((Get-Item $zipalign).VersionInfo.FileVersion)"
+          Write-Output "apksigner: $apksigner"
+          & $apksigner version
+          if ($LASTEXITCODE -ne 0) { throw "apksigner version check failed with exit code $LASTEXITCODE" }
+      - name: Report Android NDK Clang ARM64 cross compiler
+        run: |
+          $toolchainBin = "$env:ANDROID_NDK_HOME/toolchains/llvm/prebuilt/windows-x86_64/bin"
+          $crossCompiler = Join-Path $toolchainBin "aarch64-linux-android35-clang++.cmd"
+          $clangCompiler = Join-Path $toolchainBin "clang++.exe"
+          if (-not (Test-Path $crossCompiler)) { throw "Android NDK Clang ARM64 cross compiler was not found at $crossCompiler" }
+          if (-not (Test-Path $clangCompiler)) { throw "Android NDK Clang compiler was not found at $clangCompiler" }
+          Write-Output "Android NDK Clang ARM64 cross compiler: $crossCompiler"
+          & $crossCompiler --version
+          Write-Output "Android NDK Clang compiler: $clangCompiler"
+          & $clangCompiler --version
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Decode signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { throw 'ANDROID_KEYSTORE_BASE64 is required' }
+          New-Item -ItemType Directory -Force .android-keystore | Out-Null
+          [IO.File]::WriteAllBytes('.android-keystore/aa-android-release-sign-keystore.jks', [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
+      - name: Configure and build APK/AAB
+        env:
+          BUILD_ROOT: D:/build
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-windows-target-arm64-android-release
+          cmake --build --preset host-x64-windows-target-arm64-android-release-build --target apk --parallel
+          cmake --build --preset host-x64-windows-target-arm64-android-release-build --target aab --parallel
+      - name: Align and sign ARM64 release artifacts
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_PASSWORD)) { throw 'ANDROID_KEYSTORE_PASSWORD is required' }
+          $build = "D:/build/host-x64-windows-target-arm64-android-release"
+          cmake --build "$build" --config Release --target android_align_and_sign --parallel
+      - name: Locate signed APK and AAB
+        id: signedandroid
+        run: |
+          $build = "D:/build/host-x64-windows-target-arm64-android-release"
+          $signed = Get-ChildItem -Path $build -Directory -Recurse -Filter signed |
+            Where-Object { $_.Parent.Name -eq 'android-build' } |
+            Select-Object -First 1
+          if (-not $signed) { throw "No android-build/signed directory found under $build" }
+          Write-Output "Signed artifacts directory: $($signed.FullName)"
+          $apk = Get-ChildItem -Path $signed.FullName -File -Filter '*-release-aligned-signed.apk' | Select-Object -First 1
+          $aab = Get-ChildItem -Path $signed.FullName -File -Filter '*-release-signed.aab' | Select-Object -First 1
+          if (-not $apk) { throw "No *-release-aligned-signed.apk found under $($signed.FullName)" }
+          if (-not $aab) { throw "No *-release-signed.aab found under $($signed.FullName)" }
+          Write-Output "Signed APK: $($apk.FullName)"
+          Write-Output "Signed AAB: $($aab.FullName)"
+          "apk=$($apk.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "aab=$($aab.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      - name: Package signed APK and AAB
+        id: packagedandroid
+        run: |
+          $apk = Get-Item -LiteralPath '${{ steps.signedandroid.outputs.apk }}' -ErrorAction Stop
+          $aab = Get-Item -LiteralPath '${{ steps.signedandroid.outputs.aab }}' -ErrorAction Stop
+          $releaseApk = Join-Path $apk.DirectoryName "${{ github.ref_name }}-arm64-android-release.apk"
+          $releaseAab = Join-Path $aab.DirectoryName "${{ github.ref_name }}-arm64-android-release.aab"
+          Move-Item -LiteralPath $apk.FullName -Destination $releaseApk -Force
+          Move-Item -LiteralPath $aab.FullName -Destination $releaseAab -Force
+          Write-Output "Packaged apk: $releaseApk"
+          Write-Output "Packaged aab: $releaseAab"
+          "apk=$releaseApk" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "aab=$releaseAab" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-android-release
+          path: |
+            ${{ steps.packagedandroid.outputs.apk }}
+            ${{ steps.packagedandroid.outputs.aab }}
+          if-no-files-found: error
+
+  host-x64-windows-target-wasm32-emscripten-release:
+    name: host-x64-windows-target-wasm32-emscripten-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - uses: emscripten-core/setup-emsdk@v16
+        with:
+          version: 4.0.7
+          actions-cache-folder: emsdk-cache
+      - name: Report Emscripten cross compiler
+        run: |
+          emcc --version
+          em++ --version
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "EMSCRIPTEN_ROOT=$env:EMSDK/upstream/emscripten" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: D:/build
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-windows-target-wasm32-emscripten-release
+          cmake --build --preset host-x64-windows-target-wasm32-emscripten-release-build --parallel
+      - name: Package ZIP
+        run: |
+          $build = "D:/build/host-x64-windows-target-wasm32-emscripten-release"
+          cmake --install $build --config Release
+          Compress-Archive -Path "$build/install/bin" -DestinationPath "$build/install/${{ github.ref_name }}-wasm32-emscripten-release.zip"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-wasm32-emscripten-release
+          path: D:/build/host-x64-windows-target-wasm32-emscripten-release/install/${{ github.ref_name }}-wasm32-emscripten-release.zip
+          if-no-files-found: error
+
+  publish-release:
+    name: publish-release
+    needs:
+      - host-x64-windows-target-x64-windows-static-release
+      - host-arm64-osx-target-arm64-osx-release
+      - host-arm64-osx-target-arm64-ios-simulator-release
+      - host-arm64-osx-target-arm64-ios-release
+      - host-x64-linux-target-x64-linux-release
+      - host-arm64-linux-target-arm64-linux-release
+      - host-x64-windows-target-arm64-android-release
+      - host-x64-windows-target-wasm32-emscripten-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+      - name: Flatten artifacts
+        run: |
+          mkdir -p release-files
+          find artifacts -type f -exec mv -t release-files {} +
+          ls -hal release-files
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          fail_on_unmatched_files: true
+          generate_release_notes: true

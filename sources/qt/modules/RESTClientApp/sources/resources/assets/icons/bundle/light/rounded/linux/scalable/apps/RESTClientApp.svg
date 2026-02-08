@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#CFF6E1"></stop>
+      <stop offset="46%" stop-color="#83DCAB"></stop>
+      <stop offset="100%" stop-color="#3FB07B"></stop>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.30" cy="0.22" r="0.95">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"></stop>
+      <stop offset="55%" stop-color="#FFFFFF" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="shade" cx="0.80" cy="0.86" r="0.82">
+      <stop offset="0%" stop-color="#177A4E" stop-opacity="0.30"></stop>
+      <stop offset="62%" stop-color="#177A4E" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="gloss" cx="0.5" cy="-0.05" r="0.72">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.20"></stop>
+      <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"></stop>
+      <stop offset="100%" stop-color="#EAFBF1"></stop>
+    </linearGradient>
+    <g id="braces" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 372,332 C 335,332 343,420 337,470 C 332,503 321,512 294,512 C 321,512 332,521 337,554 C 343,604 335,692 372,692"></path>
+      <path d="M 652,332 C 689,332 681,420 687,470 C 692,503 703,512 730,512 C 703,512 692,521 687,554 C 681,604 689,692 652,692"></path>
+    </g>
+    <g id="arrows" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 412,464 L 612,464 M 612,464 L 581,438 M 612,464 L 581,490"></path>
+      <path d="M 612,560 L 412,560 M 412,560 L 443,534 M 412,560 L 443,586"></path>
+    </g>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#bg)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#shade)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#glow)"></rect>
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#gloss)"></rect>
+
+  
+  <use href="#braces" transform="translate(0,12)" stroke="#0B4E32" stroke-opacity="0.16" stroke-width="52"></use>
+  <use href="#arrows" transform="translate(0,12)" stroke="#0B4E32" stroke-opacity="0.16" stroke-width="48"></use>
+
+  
+  <use href="#braces" stroke="#0B5E3A" stroke-opacity="0.85" stroke-width="52"></use>
+  <use href="#arrows" stroke="#0B5E3A" stroke-opacity="0.85" stroke-width="48"></use>
+
+  
+  <use href="#braces" stroke="url(#ink)" stroke-width="44"></use>
+  <use href="#arrows" stroke="url(#ink)" stroke-width="40"></use>
+</svg>
