@@ -256,6 +256,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/CustomSignals
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ConnectSignalToMethod
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ConnectSignalToSignal
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalsAcrossComponents
 )
 
 add_subdirectory(
@@ -281,6 +282,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ConnectSignalToSignal
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsAcrossComponents
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -311,6 +315,7 @@ target_link_libraries(
           CustomSignalsplugin
           ConnectSignalToMethodplugin
           ConnectSignalToSignalplugin
+          SignalsAcrossComponentsplugin
 )
 
 set(
@@ -355,6 +360,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/CustomSignals/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ConnectSignalToMethod/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ConnectSignalToSignal/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsAcrossComponents/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL

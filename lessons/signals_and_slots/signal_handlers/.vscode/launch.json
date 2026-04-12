@@ -8,7 +8,7 @@
       "type": "cppvsdbg",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/build/package/SignalsAndSlots/bin/SignalsAndSlots.exe",
+      "program": "C:/build/package/SignalsAndSlots/bin/SignalsAndSlots.exe",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
