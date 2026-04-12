@@ -1,12 +1,14 @@
 import QtQuick
-import SignalHandlers
+//import SignalHandlers
+import SignalParameters
 
-Window {
+Window{
   width: 640
   height: 480
   visible: true
   title: qsTr("Signals And Slots")
-  SignalHandler {
 
-  }
+  //SignalHandler{}
+  
+  SignalParameters{}
 }

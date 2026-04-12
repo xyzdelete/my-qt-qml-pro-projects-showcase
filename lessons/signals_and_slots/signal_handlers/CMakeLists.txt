@@ -168,26 +168,18 @@ message(
   STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}"
 )
 
-# Guard against duplicate
-foreach(
-  _qml_path
+if(
+  NOT
   "${QT6_INSTALL_PREFIX}/qml"
-  "${CMAKE_CURRENT_BINARY_DIR}"
-  "${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalHandlers"
+  IN_LIST
+  QML_IMPORT_PATH
 )
-  if(
-    NOT
-    "${_qml_path}"
-    IN_LIST
+  list(
+    APPEND
     QML_IMPORT_PATH
+    "${QT6_INSTALL_PREFIX}/qml"
   )
-    list(
-      APPEND
-      QML_IMPORT_PATH
-      "${_qml_path}"
-    )
-  endif()
-endforeach()
+endif()
 
 message(
   STATUS "QML_IMPORT_PATH: ${QML_IMPORT_PATH}"
@@ -257,10 +249,14 @@ qt_add_qml_module(
   sources/qml/files/Main.qml
   IMPORT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalHandlers
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalParameters
 )
 
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalHandlers
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalParameters
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -284,6 +280,7 @@ target_link_libraries(
   ${CMAKE_PROJECT_NAME}
   PRIVATE Qt6::Quick
           SignalHandlersplugin
+          SignalParametersplugin
 )
 
 set(
@@ -321,6 +318,7 @@ add_custom_target(
   COMMAND
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalHandlers/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalParameters/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
