@@ -7,7 +7,8 @@ import QtQuick
 // import CustomSignals
 // import ConnectSignalToMethod
 // import ConnectSignalToSignal
-import SignalsAcrossComponents
+// import SignalsAcrossComponents
+import MultipleSignalParameters
 
 Window{
   width: 640
@@ -31,9 +32,11 @@ Window{
 
   // ConnectSignalToSignal{}
 
-  SignalsAcrossComponents{
-    width: parent.width
-    height: parent.height
-  }
+  // SignalsAcrossComponents{
+  //   width: parent.width
+  //   height: parent.height
+  // }
+
+  MultipleSignalParameters{}
 
 }
