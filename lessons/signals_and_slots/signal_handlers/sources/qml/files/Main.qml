@@ -1,7 +1,8 @@
 import QtQuick
 // import SignalHandlers
 // import SignalParameters
-import PropertyChangeSignals
+// import PropertyChangeSignals
+import Connections
 
 Window{
   width: 640
@@ -13,5 +14,6 @@ Window{
   
   // SignalParameters{}
 
-  PropertyChangeSignals{}
+  // PropertyChangeSignals{}
+  Connections{}
 }
