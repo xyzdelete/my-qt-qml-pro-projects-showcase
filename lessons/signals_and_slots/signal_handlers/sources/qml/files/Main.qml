@@ -5,7 +5,8 @@ import QtQuick
 // import Connections
 // import AttachedSignalHandlers
 // import CustomSignals
-import ConnectSignalToMethod
+// import ConnectSignalToMethod
+import ConnectSignalToSignal
 
 Window{
   width: 640
@@ -25,6 +26,8 @@ Window{
 
   // CustomSignals{}
 
-  ConnectSignalToMethod{}
+  // ConnectSignalToMethod{}
+
+  ConnectSignalToSignal{}
 
 }
