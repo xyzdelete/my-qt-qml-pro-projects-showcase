@@ -251,6 +251,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TextInput
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/BetterTextInput
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TextEdit
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/MouseArea
 )
 
 add_subdirectory(
@@ -261,6 +262,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextEdit
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/MouseArea
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -286,6 +290,7 @@ target_link_libraries(
           TextInputplugin
           BetterTextInputplugin
           TextEditplugin
+          MouseAreaplugin
 )
 
 set(
@@ -325,6 +330,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextInput/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/BetterTextInput/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextEdit/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/MouseArea/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
