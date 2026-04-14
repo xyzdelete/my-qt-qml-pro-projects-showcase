@@ -1,7 +1,8 @@
 import QtQuick
 
 // import TextInput
-import BetterTextInput
+// import BetterTextInput
+import TextEdit
 
 Window{
   width: 640
@@ -10,5 +11,6 @@ Window{
   title: qsTr("Signals And Slots")
 
   // TextInput{}
-  BetterTextInput{}
+  // BetterTextInput{}
+  TextEdit{}
 }
