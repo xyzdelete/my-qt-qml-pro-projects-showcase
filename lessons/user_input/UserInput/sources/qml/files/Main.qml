@@ -3,7 +3,8 @@ import QtQuick
 // import TextInput
 // import BetterTextInput
 // import TextEdit
-import MouseArea
+// import MouseArea
+import KeysAttachedProperty
 
 Window{
   width: 640
@@ -14,5 +15,7 @@ Window{
   // TextInput{}
   // BetterTextInput{}
   // TextEdit{}
-  MouseArea{}
+  // MouseArea{}
+  KeysAttachedProperty{}
+
 }
