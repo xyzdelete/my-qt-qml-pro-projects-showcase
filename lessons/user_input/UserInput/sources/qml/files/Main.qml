@@ -4,7 +4,8 @@ import QtQuick
 // import BetterTextInput
 // import TextEdit
 // import MouseArea
-import KeysAttachedProperty
+// import KeysAttachedProperty
+import KeyNavigation
 
 Window{
   width: 640
@@ -16,6 +17,7 @@ Window{
   // BetterTextInput{}
   // TextEdit{}
   // MouseArea{}
-  KeysAttachedProperty{}
+  // KeysAttachedProperty{}
+  KeyNavigation{}
 
 }
