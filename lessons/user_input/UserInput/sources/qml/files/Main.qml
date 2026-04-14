@@ -5,7 +5,8 @@ import QtQuick
 // import TextEdit
 // import MouseArea
 // import KeysAttachedProperty
-import KeyNavigation
+// import KeyNavigation
+import FocusScope
 
 Window{
   width: 640
@@ -18,6 +19,7 @@ Window{
   // TextEdit{}
   // MouseArea{}
   // KeysAttachedProperty{}
-  KeyNavigation{}
+  // KeyNavigation{}
+  FocusScope{}
 
 }
