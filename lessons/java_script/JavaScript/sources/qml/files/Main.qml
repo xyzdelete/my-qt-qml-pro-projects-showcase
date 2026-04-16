@@ -1,6 +1,7 @@
 import QtQuick
 
-import JavaScriptUsage
+// import JavaScriptUsage
+import FunctionsAndScope
 
 Window{
   width: 640
@@ -8,6 +9,7 @@ Window{
   visible: true
   title: qsTr("Signals And Slots")
 
-  JavaScriptUsage{}
+  // JavaScriptUsage{}
+  FunctionsAndScope{}
 
 }
