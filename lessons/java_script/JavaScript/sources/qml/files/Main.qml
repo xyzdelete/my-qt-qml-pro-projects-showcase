@@ -2,7 +2,8 @@ import QtQuick
 
 // import JavaScriptUsage
 // import FunctionsAndScope
-import JavaScriptDirectImport
+// import JavaScriptDirectImport
+import JavaScriptIndirectImport
 
 Window{
   width: 640
@@ -12,5 +13,6 @@ Window{
 
   // JavaScriptUsage{}
   // FunctionsAndScope{}
-  JavaScriptDirectImport{}
+  // JavaScriptDirectImport{}
+  JavaScriptIndirectImport{}
 }
