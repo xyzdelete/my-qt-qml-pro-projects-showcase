@@ -1,7 +1,8 @@
 import QtQuick
 
 // import JavaScriptUsage
-import FunctionsAndScope
+// import FunctionsAndScope
+import JavaScriptDirectImport
 
 Window{
   width: 640
@@ -10,6 +11,6 @@ Window{
   title: qsTr("Signals And Slots")
 
   // JavaScriptUsage{}
-  FunctionsAndScope{}
-
+  // FunctionsAndScope{}
+  JavaScriptDirectImport{}
 }
