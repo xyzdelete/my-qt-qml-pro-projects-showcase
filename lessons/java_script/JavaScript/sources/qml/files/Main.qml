@@ -5,7 +5,8 @@ import QtQuick
 // import JavaScriptDirectImport
 // import JavaScriptIndirectImport
 // import QtInclude
-import JavaScriptModules
+// import JavaScriptModules
+import QMLModuleUtilities
 
 Window{
   width: 640
@@ -18,5 +19,6 @@ Window{
   // JavaScriptDirectImport{}
   // JavaScriptIndirectImport{}
   // QtInclude{}
-  JavaScriptModules{}
+  // JavaScriptModules{}
+  QMLModuleUtilities{}
 }

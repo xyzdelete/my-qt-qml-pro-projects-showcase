@@ -254,6 +254,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/JavaScriptIndirectImport
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/QtInclude
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/JavaScriptModules
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/QMLModuleUtilities
 )
 
 add_subdirectory(
@@ -273,6 +274,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/JavaScriptModules
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/QMLModuleUtilities
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -301,6 +305,7 @@ target_link_libraries(
           JavaScriptIndirectImportplugin
           QtIncludeplugin
           JavaScriptModulesplugin
+          QMLModuleUtilitiesplugin
 )
 
 set(
@@ -343,6 +348,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/JavaScriptIndirectImport/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/QtInclude/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/JavaScriptModules/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/QMLModuleUtilities/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
