@@ -4,7 +4,8 @@ import QtQuick
 // import FunctionsAndScope
 // import JavaScriptDirectImport
 // import JavaScriptIndirectImport
-import QtInclude
+// import QtInclude
+import JavaScriptModules
 
 Window{
   width: 640
@@ -16,5 +17,6 @@ Window{
   // FunctionsAndScope{}
   // JavaScriptDirectImport{}
   // JavaScriptIndirectImport{}
-  QtInclude{}
+  // QtInclude{}
+  JavaScriptModules{}
 }
