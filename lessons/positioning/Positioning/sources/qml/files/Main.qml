@@ -2,7 +2,8 @@ import QtQuick
 
 // import Anchors
 // import AnchorsMarginAndOffsets
-import AnchorsOnParentsAndSiblings
+// import AnchorsOnParentsAndSiblings
+import ThePositioning
 
 Window{
   width: 640
@@ -10,5 +11,6 @@ Window{
   visible: true
   // Anchors{}
   // AnchorsMarginAndOffsets{}
-  AnchorsOnParentsAndSiblings{}
+  // AnchorsOnParentsAndSiblings{}
+  ThePositioning{}
 }
