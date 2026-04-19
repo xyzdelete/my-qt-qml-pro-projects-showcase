@@ -1,9 +1,11 @@
 import QtQuick
+import QtQuick.Layouts
 
 // import Anchors
 // import AnchorsMarginAndOffsets
 // import AnchorsOnParentsAndSiblings
-import ThePositioning
+// import ThePositioning
+import Layouts
 
 Window{
   width: 640
@@ -12,5 +14,6 @@ Window{
   // Anchors{}
   // AnchorsMarginAndOffsets{}
   // AnchorsOnParentsAndSiblings{}
-  ThePositioning{}
+  // ThePositioning{}
+  Layouts{}
 }

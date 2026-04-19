@@ -252,6 +252,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnchorsMarginAndOffsets
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnchorsOnParentsAndSiblings
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ThePositioning
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Layouts
 )
 
 add_subdirectory(
@@ -265,6 +266,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ThePositioning
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Layouts
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -291,6 +295,7 @@ target_link_libraries(
           AnchorsMarginAndOffsetsplugin
           AnchorsOnParentsAndSiblingsplugin
           ThePositioningplugin
+          Layoutsplugin
 )
 
 set(
@@ -331,6 +336,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsMarginAndOffsets/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsOnParentsAndSiblings/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ThePositioning/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Layouts/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
