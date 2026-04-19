@@ -250,6 +250,7 @@ qt_add_qml_module(
   IMPORT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Anchors
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnchorsMarginAndOffsets
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnchorsOnParentsAndSiblings
 )
 
 add_subdirectory(
@@ -257,6 +258,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsMarginAndOffsets
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsOnParentsAndSiblings
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -281,6 +285,7 @@ target_link_libraries(
   PRIVATE Qt6::Quick
           Anchorsplugin
           AnchorsMarginAndOffsetsplugin
+          AnchorsOnParentsAndSiblingsplugin
 )
 
 set(
@@ -319,6 +324,7 @@ add_custom_target(
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Anchors/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsMarginAndOffsets/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnchorsOnParentsAndSiblings/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
