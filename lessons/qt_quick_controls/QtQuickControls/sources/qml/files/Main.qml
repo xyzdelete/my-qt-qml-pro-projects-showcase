@@ -1,7 +1,8 @@
 import QtQuick
 
 // import Buttons
-import BusyIndicators
+// import BusyIndicators
+import CheckBoxes
 
 Window{
   width: 640
@@ -9,5 +10,6 @@ Window{
   visible: true
 
   // Buttons{}
-  BusyIndicators{}
+  // BusyIndicators{}
+  CheckBoxes{}
 }

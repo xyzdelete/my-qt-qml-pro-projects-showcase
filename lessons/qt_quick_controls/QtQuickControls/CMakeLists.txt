@@ -251,6 +251,7 @@ qt_add_qml_module(
   IMPORT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Buttons
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/BusyIndicators
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/CheckBoxes
 )
 
 add_subdirectory(
@@ -258,6 +259,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/BusyIndicators
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/CheckBoxes
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -283,6 +287,7 @@ target_link_libraries(
           Qt6::QuickControls2
           Buttonsplugin
           BusyIndicatorsplugin
+          CheckBoxesplugin
 )
 
 set(
@@ -321,6 +326,7 @@ add_custom_target(
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Buttons/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/BusyIndicators/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/CheckBoxes/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
