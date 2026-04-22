@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     },
     Qt::QueuedConnection);
   engine.addImportPath(":/qt/qml");
-  QQuickStyle::setStyle("Default");
+  QQuickStyle::setStyle("Material");
   engine.loadFromModule("QtQuickControls", "Main");
 
   return app.exec();
