@@ -4,7 +4,8 @@ import QtQuick
 // import BusyIndicators
 // import CheckBoxes
 // import ComboBoxes
-import DelayButtons
+// import DelayButtons
+import Dials
 
 Window{
   width: 640
@@ -15,5 +16,6 @@ Window{
   // BusyIndicators{}
   // CheckBoxes{}
   // ComboBoxes{}
-  DelayButtons{}
+  // DelayButtons{}
+  Dials{}
 }
