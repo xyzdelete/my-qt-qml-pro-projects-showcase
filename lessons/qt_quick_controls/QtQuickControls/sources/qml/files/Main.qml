@@ -2,7 +2,8 @@ import QtQuick
 
 // import Buttons
 // import BusyIndicators
-import CheckBoxes
+// import CheckBoxes
+import ComboBoxes
 
 Window{
   width: 640
@@ -11,5 +12,6 @@ Window{
 
   // Buttons{}
   // BusyIndicators{}
-  CheckBoxes{}
+  // CheckBoxes{}
+  ComboBoxes{}
 }
