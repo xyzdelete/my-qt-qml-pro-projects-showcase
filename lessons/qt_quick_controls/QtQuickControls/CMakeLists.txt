@@ -255,6 +255,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ComboBoxes
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/DelayButtons
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Dials
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Frames
 )
 
 add_subdirectory(
@@ -274,6 +275,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Dials
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Frames
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -303,6 +307,7 @@ target_link_libraries(
           ComboBoxesplugin
           DelayButtonsplugin
           Dialsplugin
+          Framesplugin
 )
 
 set(
@@ -345,6 +350,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ComboBoxes/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/DelayButtons/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Dials/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Frames/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
