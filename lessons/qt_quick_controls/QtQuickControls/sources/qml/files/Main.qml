@@ -7,7 +7,8 @@ import QtQuick
 // import DelayButtons
 // import Dials
 // import Frames
-import GroupBoxesRadioButonsCheckBoxes
+// import GroupBoxesRadioButonsCheckBoxes
+import SwipeViewsAndPageIndicators
 
 Window{
   width: 640
@@ -20,5 +21,6 @@ Window{
   // ComboBoxes{}
   // DelayButtons{}
   // Dials{}
-  GroupBoxesRadioButonsCheckBoxes{}
+  // GroupBoxesRadioButonsCheckBoxes{}
+  SwipeViewsAndPageIndicators{}
 }

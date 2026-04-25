@@ -257,6 +257,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Dials
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Frames
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/GroupBoxesRadioButonsCheckBoxes
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SwipeViewsAndPageIndicators
 )
 
 add_subdirectory(
@@ -282,6 +283,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/GroupBoxesRadioButonsCheckBoxes
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SwipeViewsAndPageIndicators
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -313,6 +317,7 @@ target_link_libraries(
           Dialsplugin
           Framesplugin
           GroupBoxesRadioButonsCheckBoxesplugin
+          SwipeViewsAndPageIndicatorsplugin
 )
 
 set(
@@ -357,6 +362,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Dials/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Frames/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/GroupBoxesRadioButonsCheckBoxes/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SwipeViewsAndPageIndicators/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
