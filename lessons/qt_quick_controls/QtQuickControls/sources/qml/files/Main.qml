@@ -10,7 +10,8 @@ import QtQuick
 // import GroupBoxesRadioButonsCheckBoxes
 // import SwipeViewsAndPageIndicators
 // import ProgressBars
-import RangeSliders
+// import RangeSliders
+import FlickablesAndScrollBars
 
 Window{
   width: 640
@@ -26,5 +27,6 @@ Window{
   // GroupBoxesRadioButonsCheckBoxes{}
   // SwipeViewsAndPageIndicators{}
   // ProgressBars{}
-  RangeSliders{}
+  // RangeSliders{}
+  FlickablesAndScrollBars{}
 }
