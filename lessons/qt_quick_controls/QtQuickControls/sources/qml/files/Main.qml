@@ -15,7 +15,8 @@ import QtQuick
 // import Sliders
 // import Switches
 // import PagesAndTabBars
-import TextAreasAndScrollViews
+// import TextAreasAndScrollViews
+import TextFieldsAndLabels
 
 Window{
   width: 640
@@ -36,5 +37,6 @@ Window{
   // Sliders{}
   // Switches{}
   // PagesAndTabBars{}
-  TextAreasAndScrollViews{}
+  // TextAreasAndScrollViews{}
+  TextFieldsAndLabels{}
 }
