@@ -12,7 +12,8 @@ import QtQuick
 // import ProgressBars
 // import RangeSliders
 // import FlickablesAndScrollBars
-import Sliders
+// import Sliders
+import Switches
 
 Window{
   width: 640
@@ -30,5 +31,6 @@ Window{
   // ProgressBars{}
   // RangeSliders{}
   // FlickablesAndScrollBars{}
-  Sliders{}
+  // Sliders{}
+  Switches{}
 }
