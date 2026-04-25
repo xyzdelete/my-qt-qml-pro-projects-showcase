@@ -8,7 +8,8 @@ import QtQuick
 // import Dials
 // import Frames
 // import GroupBoxesRadioButonsCheckBoxes
-import SwipeViewsAndPageIndicators
+// import SwipeViewsAndPageIndicators
+import ProgressBars
 
 Window{
   width: 640
@@ -22,5 +23,6 @@ Window{
   // DelayButtons{}
   // Dials{}
   // GroupBoxesRadioButonsCheckBoxes{}
-  SwipeViewsAndPageIndicators{}
+  // SwipeViewsAndPageIndicators{}
+  ProgressBars{}
 }
