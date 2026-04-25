@@ -14,7 +14,8 @@ import QtQuick
 // import FlickablesAndScrollBars
 // import Sliders
 // import Switches
-import PagesAndTabBars
+// import PagesAndTabBars
+import TextAreasAndScrollViews
 
 Window{
   width: 640
@@ -34,5 +35,6 @@ Window{
   // FlickablesAndScrollBars{}
   // Sliders{}
   // Switches{}
-  PagesAndTabBars{}
+  // PagesAndTabBars{}
+  TextAreasAndScrollViews{}
 }
