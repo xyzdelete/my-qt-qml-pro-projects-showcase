@@ -263,6 +263,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/FlickablesAndScrollBars
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Sliders
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Switches
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/PagesAndTabBars
 )
 
 add_subdirectory(
@@ -307,6 +308,9 @@ add_subdirectory(
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Switches
 )
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PagesAndTabBars
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
 # you are developing for iOS or macOS you should consider setting an explicit,
@@ -343,6 +347,7 @@ target_link_libraries(
           FlickablesAndScrollBarsplugin
           Slidersplugin
           Switchesplugin
+          PagesAndTabBarsplugin
 )
 
 set(
@@ -393,6 +398,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FlickablesAndScrollBars/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Sliders/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Switches/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PagesAndTabBars/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
