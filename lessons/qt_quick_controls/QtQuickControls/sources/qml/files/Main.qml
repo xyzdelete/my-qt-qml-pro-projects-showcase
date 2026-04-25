@@ -16,7 +16,8 @@ import QtQuick
 // import Switches
 // import PagesAndTabBars
 // import TextAreasAndScrollViews
-import TextFieldsAndLabels
+// import TextFieldsAndLabels
+import SplitView
 
 Window{
   width: 640
@@ -38,5 +39,6 @@ Window{
   // Switches{}
   // PagesAndTabBars{}
   // TextAreasAndScrollViews{}
-  TextFieldsAndLabels{}
+  // TextFieldsAndLabels{}
+  SplitView{}
 }

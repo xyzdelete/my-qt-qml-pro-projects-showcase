@@ -266,6 +266,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/PagesAndTabBars
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TextAreasAndScrollViews
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TextFieldsAndLabels
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SplitView
 )
 
 add_subdirectory(
@@ -319,6 +320,9 @@ add_subdirectory(
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextFieldsAndLabels
 )
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SplitView
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
 # you are developing for iOS or macOS you should consider setting an explicit,
@@ -358,6 +362,7 @@ target_link_libraries(
           PagesAndTabBarsplugin
           TextAreasAndScrollViewsplugin
           TextFieldsAndLabelsplugin
+          SplitViewplugin
 )
 
 set(
@@ -411,6 +416,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PagesAndTabBars/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextAreasAndScrollViews/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TextFieldsAndLabels/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SplitView/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
