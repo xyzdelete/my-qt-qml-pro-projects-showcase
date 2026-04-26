@@ -253,6 +253,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/FileDialogs
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/FolderDialogs
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/FontDialogs
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/MessageDialogs
 )
 
 add_subdirectory(
@@ -266,6 +267,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FontDialogs
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/MessageDialogs
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -293,6 +297,7 @@ target_link_libraries(
           FileDialogsplugin
           FolderDialogsplugin
           FontDialogsplugin
+          MessageDialogsplugin
 )
 
 set(
@@ -333,6 +338,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FileDialogs/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FolderDialogs/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FontDialogs/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/MessageDialogs/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL

@@ -1,3 +1,3 @@
-import FontDialogs
+import MessageDialogs
 
-FontDialogs{}
+MessageDialogs{}
