@@ -1,3 +1,3 @@
-import FolderDialogs
+import FontDialogs
 
-FolderDialogs{}
+FontDialogs{}
