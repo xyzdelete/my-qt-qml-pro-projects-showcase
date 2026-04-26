@@ -1,3 +1,3 @@
-import MessageDialogs
+import CustomDialogs
 
-MessageDialogs{}
+CustomDialogs{}
