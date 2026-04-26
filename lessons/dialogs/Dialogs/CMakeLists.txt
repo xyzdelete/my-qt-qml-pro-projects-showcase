@@ -250,10 +250,14 @@ qt_add_qml_module(
   sources/qml/files/Main.qml
   IMPORT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ColorDialogs
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/FileDialogs
 )
 
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ColorDialogs
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FileDialogs
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -278,6 +282,7 @@ target_link_libraries(
   PRIVATE Qt6::Quick
           Qt6::QuickControls2
           ColorDialogsplugin
+          FileDialogsplugin
 )
 
 set(
@@ -315,6 +320,7 @@ add_custom_target(
   COMMAND
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ColorDialogs/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/FileDialogs/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
