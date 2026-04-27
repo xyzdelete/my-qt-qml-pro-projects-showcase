@@ -1,3 +1,3 @@
-import InlineModels
+import HeaderFooterAndHighlight
 
-InlineModels{}
+HeaderFooterAndHighlight{}
