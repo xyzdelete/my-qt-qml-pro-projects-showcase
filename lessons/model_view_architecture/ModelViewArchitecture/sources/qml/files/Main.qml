@@ -1,3 +1,3 @@
-import ListViewAndListModel
+import InlineModels
 
-ListViewAndListModel{}
+InlineModels{}
