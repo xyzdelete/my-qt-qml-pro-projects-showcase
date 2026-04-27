@@ -1,8 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Controls.Material
-import QtQuick.Dialogs
 
 ApplicationWindow {
   id: rootId
@@ -45,28 +43,7 @@ ApplicationWindow {
       "December",
     ]
     // delegate: delegateId
-    delegate: Rectangle {
-      id: rectangleId
-      width: parent.width
-      height: 50
-      color: "dodgerblue"
-      border.color: "black"
-      radius: 15
-      Text {
-        id: textId
-        anchors.centerIn: parent
-        font.pointSize: 20
-        text: modelData
-      }
-
-      MouseArea {
-        anchors.fill: parent
-        onClicked: function() {
-          print("Clicked on" + modelData)
-          listViewId.currentIndex = index
-        }
-      }
-    }
+    delegate: delegateId
   }
 
   Component {
@@ -85,6 +62,34 @@ ApplicationWindow {
         anchors.centerIn: parent
         text: "Months"
         font.pointSize: 20
+      }
+    }
+  }
+
+  Component {
+    id: delegateId
+    Rectangle {
+      required property var modelData
+      required property int index
+      id: rectangleId
+      width: parent.width
+      height: 50
+      color: "gray"
+      border.color: "black"
+      radius: 15
+      Text {
+        id: textId
+        anchors.centerIn: parent
+        font.pointSize: 20
+        text: rectangleId.modelData
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        onClicked: function() {
+          print("Clicked on " + rectangleId.modelData + " at index " + rectangleId.index)
+          listViewId.currentIndex = rectangleId.index
+        }
       }
     }
   }
