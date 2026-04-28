@@ -255,6 +255,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SectionDecoration
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Repeater
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/DynamicModels
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/GridViews
 )
 
 add_subdirectory(
@@ -274,6 +275,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/DynamicModels
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/GridViews
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -303,6 +307,7 @@ target_link_libraries(
           SectionDecorationplugin
           Repeaterplugin
           DynamicModelsplugin
+          GridViewsplugin
 )
 
 set(
@@ -345,6 +350,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SectionDecoration/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Repeater/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/DynamicModels/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/GridViews/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
