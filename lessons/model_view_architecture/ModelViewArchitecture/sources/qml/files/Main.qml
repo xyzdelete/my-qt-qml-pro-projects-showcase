@@ -1,3 +1,3 @@
-import SectionDecoration
+import Repeater
 
-SectionDecoration{}
+Repeater{}
