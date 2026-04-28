@@ -1,3 +1,3 @@
-import HeaderFooterAndHighlight
+import SectionDecoration
 
-HeaderFooterAndHighlight{}
+SectionDecoration{}

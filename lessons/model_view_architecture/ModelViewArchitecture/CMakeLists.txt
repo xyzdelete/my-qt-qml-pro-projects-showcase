@@ -252,6 +252,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ListViewAndListModel
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/InlineModels
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/HeaderFooterAndHighlight
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SectionDecoration
 )
 
 add_subdirectory(
@@ -262,6 +263,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/HeaderFooterAndHighlight
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SectionDecoration
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -288,6 +292,7 @@ target_link_libraries(
           ListViewAndListModelplugin
           InlineModelsplugin
           HeaderFooterAndHighlightplugin
+          SectionDecorationplugin
 )
 
 set(
@@ -327,6 +332,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ListViewAndListModel/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/InlineModels/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/HeaderFooterAndHighlight/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SectionDecoration/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
