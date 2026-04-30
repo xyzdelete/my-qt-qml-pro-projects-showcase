@@ -1,3 +1,3 @@
-import XmlListModels
+import PathViews
 
-XmlListModels{}
+PathViews{}
