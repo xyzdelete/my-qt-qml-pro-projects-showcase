@@ -1,3 +1,3 @@
-import PathViews
+import TableViews
 
-PathViews{}
+TableViews {}
