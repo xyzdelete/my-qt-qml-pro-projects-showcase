@@ -1,3 +1,3 @@
-import GroupedAnimations
+import PendulumSwing
 
-GroupedAnimations {}
+PendulumSwing {}
