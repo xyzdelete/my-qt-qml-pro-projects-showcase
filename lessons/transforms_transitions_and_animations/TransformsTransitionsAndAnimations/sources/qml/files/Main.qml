@@ -1,3 +1,3 @@
-import SpringAnimation
+import PathAnimation
 
-SpringAnimation {}
+PathAnimation {}

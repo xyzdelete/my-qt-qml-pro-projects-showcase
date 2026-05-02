@@ -255,6 +255,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Behavior
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SmoothedAnimation
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SpringAnimation
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/PathAnimation
 )
 
 add_subdirectory(
@@ -274,6 +275,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SpringAnimation
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PathAnimation
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -303,6 +307,7 @@ target_link_libraries(
           Behaviorplugin
           SmoothedAnimationplugin
           SpringAnimationplugin
+          PathAnimationplugin
 )
 
 set(
@@ -345,6 +350,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Behavior/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SmoothedAnimation/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SmoothedAnimation/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PathAnimation/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
