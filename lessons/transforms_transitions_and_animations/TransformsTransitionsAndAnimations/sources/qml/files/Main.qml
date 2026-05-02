@@ -1,3 +1,3 @@
-import StatesAndTransitions
+import StatesWithGradients
 
-StatesAndTransitions {}
+StatesWithGradients {}
