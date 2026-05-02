@@ -257,6 +257,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SpringAnimation
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/PathAnimation
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ColorAnimation
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/EasingCurves
 )
 
 add_subdirectory(
@@ -282,6 +283,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ColorAnimation
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/EasingCurves
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -313,6 +317,7 @@ target_link_libraries(
           SpringAnimationplugin
           PathAnimationplugin
           ColorAnimationplugin
+          EasingCurvesplugin
 )
 
 set(
@@ -357,6 +362,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SmoothedAnimation/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PathAnimation/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ColorAnimation/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/EasingCurves/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL

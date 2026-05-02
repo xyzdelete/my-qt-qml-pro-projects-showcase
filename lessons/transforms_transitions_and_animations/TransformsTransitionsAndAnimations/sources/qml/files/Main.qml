@@ -1,3 +1,3 @@
-import ColorAnimation
+import EasingCurves
 
-ColorAnimation {}
+EasingCurves {}
