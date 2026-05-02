@@ -1,3 +1,3 @@
-import Behavior
+import SmoothedAnimation
 
-Behavior {}
+SmoothedAnimation {}
