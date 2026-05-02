@@ -1,3 +1,3 @@
-import EasingCurves
+import GroupedAnimations
 
-EasingCurves {}
+GroupedAnimations {}
