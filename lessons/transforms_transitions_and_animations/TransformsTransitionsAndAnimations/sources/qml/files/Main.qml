@@ -1,3 +1,3 @@
-import PathAnimation
+import ColorAnimation
 
-PathAnimation {}
+ColorAnimation {}
