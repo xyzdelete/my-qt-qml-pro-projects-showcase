@@ -1,3 +1,3 @@
-import AnimationIntroduction
+import AnimationTargets
 
-AnimationIntroduction {}
+AnimationTargets {}
