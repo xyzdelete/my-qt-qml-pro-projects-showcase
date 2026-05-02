@@ -1,3 +1,3 @@
-import PendulumSwing
+import StatesAndTransitions
 
-PendulumSwing {}
+StatesAndTransitions {}

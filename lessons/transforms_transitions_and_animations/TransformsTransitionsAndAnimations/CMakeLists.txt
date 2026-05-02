@@ -260,6 +260,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/EasingCurves
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/GroupedAnimations
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/PendulumSwing
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/StatesAndTransitions
 )
 
 add_subdirectory(
@@ -295,6 +296,9 @@ add_subdirectory(
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PendulumSwing
 )
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/StatesAndTransitions
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
 # you are developing for iOS or macOS you should consider setting an explicit,
@@ -328,6 +332,7 @@ target_link_libraries(
           EasingCurvesplugin
           GroupedAnimationsplugin
           PendulumSwingplugin
+          StatesAndTransitionsplugin
 )
 
 set(
@@ -375,6 +380,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/EasingCurves/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/GroupedAnimations/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/PendulumSwing/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/StatesAndTransitions/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
