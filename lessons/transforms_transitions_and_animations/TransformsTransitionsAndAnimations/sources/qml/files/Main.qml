@@ -1,3 +1,3 @@
-import AnimationTargets
+import Behavior
 
-AnimationTargets {}
+Behavior {}

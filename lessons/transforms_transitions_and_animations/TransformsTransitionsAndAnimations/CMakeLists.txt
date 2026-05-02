@@ -252,6 +252,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Transforms
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnimationIntroduction
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/AnimationTargets
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/Behavior
 )
 
 add_subdirectory(
@@ -262,6 +263,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnimationTargets
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Behavior
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -288,6 +292,7 @@ target_link_libraries(
           Transformsplugin
           AnimationIntroductionplugin
           AnimationTargetsplugin
+          Behaviorplugin
 )
 
 set(
@@ -327,6 +332,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Transforms/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnimationIntroduction/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/AnimationTargets/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/Behavior/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
