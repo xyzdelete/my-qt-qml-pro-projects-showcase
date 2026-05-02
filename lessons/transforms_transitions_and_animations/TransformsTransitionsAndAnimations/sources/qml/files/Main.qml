@@ -1,3 +1,3 @@
-import SmoothedAnimation
+import SpringAnimation
 
-SmoothedAnimation {}
+SpringAnimation {}
