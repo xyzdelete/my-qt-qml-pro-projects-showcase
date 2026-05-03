@@ -1,3 +1,3 @@
-import XmlHttpRequest
+import RESTApi
 
-XmlHttpRequest {}
+RESTApi {}
