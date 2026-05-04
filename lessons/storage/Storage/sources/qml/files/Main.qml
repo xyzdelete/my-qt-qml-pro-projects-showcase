@@ -1,0 +1,3 @@
+import SettingsAutomatic
+
+SettingsAutomatic {}
