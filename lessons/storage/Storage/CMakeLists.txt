@@ -252,6 +252,7 @@ qt_add_qml_module(
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SettingsAutomatic
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SettingsCustom
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SaveTheStates
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SQLite
 )
 
 add_subdirectory(
@@ -262,6 +263,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SaveTheStates
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SQLite
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -288,6 +292,7 @@ target_link_libraries(
           SettingsAutomaticplugin
           SettingsCustomplugin
           SaveTheStatesplugin
+          SQLiteplugin
 )
 
 set(
@@ -327,6 +332,7 @@ add_custom_target(
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SettingsAutomatic/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SettingsCustom/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SaveTheStates/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SQLite/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
