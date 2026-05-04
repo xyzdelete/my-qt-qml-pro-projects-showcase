@@ -1,3 +1,3 @@
-import SettingsAutomatic
+import SettingsCustom
 
-SettingsAutomatic {}
+SettingsCustom {}
