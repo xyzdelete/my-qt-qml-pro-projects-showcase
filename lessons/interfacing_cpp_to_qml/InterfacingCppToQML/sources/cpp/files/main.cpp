@@ -1,3 +1,4 @@
+#include "cppsignalsender.hpp"
 #include "cppworker.hpp"
 
 #include <QGuiApplication>
@@ -14,10 +15,12 @@ int main(int argc, char* argv[])
 
   // Create the object on the C++ side
   CppWorker cppworker;
+  CppSignalSender sender;
 
   QQmlApplicationEngine engine;
 
   engine.rootContext()->setContextProperty("BWorker", &cppworker);
+  engine.rootContext()->setContextProperty("CppSignalSender", &sender);
 
   QObject::connect(
     &engine,

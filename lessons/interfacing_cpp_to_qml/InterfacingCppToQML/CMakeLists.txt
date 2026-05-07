@@ -254,9 +254,12 @@ qt_add_qml_module(
   IMPORT_PATH
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ContextProperties
   ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TheConnections
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalsFromTheCppSide
   SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/cppworker.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers/cppworker.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers/cppsignalsender.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/cppsignalsender.cpp
 )
 
 target_include_directories(
@@ -278,6 +281,9 @@ add_subdirectory(
 )
 add_subdirectory(
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TheConnections
+)
+add_subdirectory(
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsFromTheCppSide
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
@@ -303,6 +309,7 @@ target_link_libraries(
           Qt6::QuickControls2
           ContextPropertiesplugin
           TheConnectionsplugin
+          SignalsFromTheCppSideplugin
 )
 
 set(
@@ -341,6 +348,7 @@ add_custom_target(
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ContextProperties/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TheConnections/CMakeLists.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsFromTheCppSide/CMakeLists.txt
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL

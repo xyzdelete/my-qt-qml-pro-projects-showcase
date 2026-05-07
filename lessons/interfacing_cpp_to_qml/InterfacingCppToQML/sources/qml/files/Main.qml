@@ -1,3 +1,3 @@
-import TheConnections
+import SignalsFromTheCppSide
 
-TheConnections {}
+SignalsFromTheCppSide {}
