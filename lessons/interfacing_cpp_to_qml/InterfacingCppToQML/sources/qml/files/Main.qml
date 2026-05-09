@@ -1,3 +1,3 @@
-import SignalsFromTheCppSide
+import QPROPERTYMapping
 
-SignalsFromTheCppSide {}
+QPROPERTYMapping {}
