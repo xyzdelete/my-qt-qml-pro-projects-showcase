@@ -1,3 +1,3 @@
-import QPROPERTYMapping
+import ContextObjects
 
-QPROPERTYMapping {}
+ContextObjects {}

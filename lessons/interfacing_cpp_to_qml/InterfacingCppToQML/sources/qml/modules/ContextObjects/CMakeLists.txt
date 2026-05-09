@@ -3,7 +3,7 @@ cmake_minimum_required(
 )
 
 project(
-  TheConnections
+  ContextObjects
   VERSION 1.0
   LANGUAGES CXX
 )
@@ -39,7 +39,6 @@ qt_add_qml_module(
   ${PROJECT_NAME}
   RESOURCE_PREFIX
   /${PROJECT_NAME}
-  QML_FILES
   OUTPUT_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
   QML_FILES

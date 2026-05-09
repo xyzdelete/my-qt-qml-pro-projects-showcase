@@ -237,8 +237,59 @@ find_package(
 
 qt_standard_project_setup()
 
+qt_policy(
+  SET
+  QTP0004
+  NEW
+)
+
 qt_add_executable(
   ${CMAKE_PROJECT_NAME}
+)
+
+file(
+  GLOB
+  CPP_HEADERS
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/cpp/headers/*.hpp
+)
+file(
+  GLOB
+  CPP_FILES
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/cpp/files/*.cpp
+)
+file(
+  GLOB
+  CPP_MODULES_DIRS
+  LIST_DIRECTORIES true
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/cpp/modules/*
+)
+file(
+  GLOB
+  QML_MODULES_DIRS
+  LIST_DIRECTORIES true
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/qml/modules/*
+)
+file(
+  GLOB
+  QML_FILES
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/qml/files/*.qml
+)
+file(
+  GLOB_RECURSE
+  RESOURCES
+  CONFIGURE_DEPENDS
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  sources/resources/*
 )
 
 qt_add_qml_module(
@@ -246,22 +297,18 @@ qt_add_qml_module(
   URI
   ${CMAKE_PROJECT_NAME}
   RESOURCE_PREFIX
-  /qt/qml
+  /${CMAKE_PROJECT_NAME}
   OUTPUT_DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}
   QML_FILES
-  sources/qml/files/Main.qml
+  ${QML_FILES}
   IMPORT_PATH
-  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/ContextProperties
-  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/TheConnections
-  ${CMAKE_CURRENT_BINARY_DIR}/sources/qml/modules/SignalsFromTheCppSide
+  ${QML_MODULES_DIRS}
   SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/cppworker.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers/cppworker.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers/cppsignalsender.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/cppsignalsender.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers/movie.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/movie.cpp
+  ${CPP_HEADERS}
+  ${CPP_FILES}
+  RESOURCES
+  ${RESOURCES}
 )
 
 target_include_directories(
@@ -269,27 +316,29 @@ target_include_directories(
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/headers
 )
 
-target_sources(
-  ${CMAKE_PROJECT_NAME}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/files/main.cpp
-  PRIVATE FILE_SET
-          CXX_MODULES
-          FILES
-          ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/modules/cppworker.cppm
+target_compile_options(
+  ${PROJECT_NAME}
+  PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
 )
 
-add_subdirectory(
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ContextProperties
+foreach(
+  dir
+  IN
+  LISTS QML_MODULES_DIRS
+        CPP_MODULES_DIRS
 )
-add_subdirectory(
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TheConnections
-)
-add_subdirectory(
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsFromTheCppSide
-)
-add_subdirectory(
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/QPROPERTYMapping
-)
+  if(
+    IS_DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}/${dir}
+    AND EXISTS
+        ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/CMakeLists.txt
+  )
+    add_subdirectory(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${dir}
+    )
+  endif()
+
+endforeach()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1. If
 # you are developing for iOS or macOS you should consider setting an explicit,
@@ -316,6 +365,8 @@ target_link_libraries(
           TheConnectionsplugin
           SignalsFromTheCppSideplugin
           QPROPERTYMappingplugin
+          ContextObjectsplugin
+          CppWorkerModule
 )
 
 set(
@@ -348,14 +399,24 @@ install(
   SCRIPT ${deploy_script}
 )
 
+file(
+  GLOB
+  QML_MODULES_DIRS_CMAKE_FILES
+  CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/*/CMakeLists.txt
+)
+file(
+  GLOB
+  CPP_MODULES_DIRS_CMAKE_FILES
+  CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/cpp/modules/*/CMakeLists.txt
+)
+
 add_custom_target(
   cmake_format
   COMMAND
     cmake-format -i ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/ContextProperties/CMakeLists.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/TheConnections/CMakeLists.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsFromTheCppSide/CMakeLists.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/qml/modules/SignalsFromTheCppSide/CMakeLists.txt
+    ${QML_MODULES_DIRS_CMAKE_FILES} ${CPP_MODULES_DIRS_CMAKE_FILES}
   COMMENT "Running cmake_format custom target"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   USES_TERMINAL
