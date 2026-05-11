@@ -366,6 +366,7 @@ target_link_libraries(
           SignalsFromTheCppSideplugin
           QPROPERTYMappingplugin
           ContextObjectsplugin
+          CallingJavaScriptFromCppplugin
           CppWorkerModule
 )
 

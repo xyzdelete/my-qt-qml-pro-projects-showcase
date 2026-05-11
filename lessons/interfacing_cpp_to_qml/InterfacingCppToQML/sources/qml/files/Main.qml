@@ -1,3 +1,3 @@
-import ContextObjects
+import CallingJavaScriptFromCpp
 
-ContextObjects {}
+CallingJavaScriptFromCpp {}
