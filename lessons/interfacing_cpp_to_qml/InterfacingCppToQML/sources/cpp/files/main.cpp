@@ -66,7 +66,8 @@ int main(int argc, char* argv[])
   paths << ":/InterfacingCppToQML" << ":/ContextObjects"
         << ":/ContextProperties" << ":/QPROPERTYMapping"
         << ":/SignalsFromTheCppSide" << ":/TheConnections"
-        << ":/CallingJavaScriptFromCpp" << ":/InstantiableObjects";
+        << ":/CallingJavaScriptFromCpp" << ":/InstantiableObjects"
+        << ":/InstantiableModule";
   paths.removeDuplicates();
   engine.setImportPathList(paths);
   QQuickStyle::setStyle("Material");

@@ -1,3 +1,3 @@
-import InstantiableObjects
+import InstantiableModule
 
-InstantiableObjects {}
+InstantiableModule {}
