@@ -3,6 +3,7 @@ import CppWorkerModule;
 #include "cppsignalsender.hpp"
 #include "cppworker.hpp"
 #include "movie.hpp"
+#include "mysingleton.hpp"
 #include "propertywrapper.hpp"
 #include "qmljscaller.hpp"
 
@@ -52,6 +53,13 @@ int main(int argc, char* argv[])
   CppWorkerModule::hello_world();
 
   qmlRegisterType<Movie>("instantiable.object.movie", 1, 0, "Movie");
+  MySingleton* singleton = new MySingleton(&app);
+  qmlRegisterSingletonInstance(
+    "my.custom.singleton",
+    1,
+    0,
+    "MySingleton",
+    singleton);
 
   QObject::connect(
     &engine,
@@ -67,7 +75,7 @@ int main(int argc, char* argv[])
         << ":/ContextProperties" << ":/QPROPERTYMapping"
         << ":/SignalsFromTheCppSide" << ":/TheConnections"
         << ":/CallingJavaScriptFromCpp" << ":/InstantiableObjects"
-        << ":/InstantiableModule";
+        << ":/InstantiableModule" << ":/SingletonObject";
   paths.removeDuplicates();
   engine.setImportPathList(paths);
   QQuickStyle::setStyle("Material");

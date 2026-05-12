@@ -369,6 +369,7 @@ target_link_libraries(
           CallingJavaScriptFromCppplugin
           InstantiableObjectsplugin
           InstantiableModuleplugin
+          SingletonObjectplugin
           CppWorkerModule
 )
 

@@ -1,3 +1,3 @@
-import InstantiableModule
+import SingletonObject
 
-InstantiableModule {}
+SingletonObject {}
