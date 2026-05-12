@@ -367,6 +367,7 @@ target_link_libraries(
           QPROPERTYMappingplugin
           ContextObjectsplugin
           CallingJavaScriptFromCppplugin
+          InstantiableObjectsplugin
           CppWorkerModule
 )
 

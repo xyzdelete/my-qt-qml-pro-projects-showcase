@@ -51,6 +51,8 @@ int main(int argc, char* argv[])
 
   CppWorkerModule::hello_world();
 
+  qmlRegisterType<Movie>("instantiable.object.movie", 1, 0, "Movie");
+
   QObject::connect(
     &engine,
     &QQmlApplicationEngine::objectCreationFailed,
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
   paths << ":/InterfacingCppToQML" << ":/ContextObjects"
         << ":/ContextProperties" << ":/QPROPERTYMapping"
         << ":/SignalsFromTheCppSide" << ":/TheConnections"
-        << ":/CallingJavaScriptFromCpp";
+        << ":/CallingJavaScriptFromCpp" << ":/InstantiableObjects";
   paths.removeDuplicates();
   engine.setImportPathList(paths);
   QQuickStyle::setStyle("Material");

@@ -1,25 +1,36 @@
 #pragma once
 
 #include <QObject>
+// #include <qqml.h>
+#include <QtQml>
 
 class Movie : public QObject
 {
   Q_OBJECT
+
   Q_PROPERTY(
     QString mainCharacter READ mainCharacter WRITE setMainCharacter NOTIFY
       mainCharacterChanged)
   Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+  // QML_ELEMENT
+  // QML_NAMED_ELEMENT(Movie_v2)
+
 public:
   explicit Movie(QObject* parent = nullptr);
-  const QString& mainCharacter() const;
-  void setMainCharacter(const QString& newMainCharacter);
-  const QString& title() const;
-  void setTitle(const QString& newMainCharacter);
+
+  QString mainCharacter() const;
+  void setMainCharacter(QString mainCharacter);
+
+  QString title() const;
+  void setTitle(QString title);
+
 signals:
-  void mainCharacterChanged();
-  void titleChanged();
+
+  void mainCharacterChanged(QString mainCharacter);
+
+  void titleChanged(QString title);
 
 private:
-  QString m_mainCharacter;
   QString m_title;
+  QString m_mainCharacter;
 };

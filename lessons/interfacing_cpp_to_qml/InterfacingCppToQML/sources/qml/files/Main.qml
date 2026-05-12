@@ -1,3 +1,3 @@
-import CallingJavaScriptFromCpp
+import InstantiableObjects
 
-CallingJavaScriptFromCpp {}
+InstantiableObjects {}
