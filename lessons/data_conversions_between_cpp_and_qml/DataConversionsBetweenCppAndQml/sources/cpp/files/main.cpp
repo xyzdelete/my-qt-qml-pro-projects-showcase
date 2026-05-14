@@ -1,5 +1,7 @@
 import CppWorkerModule;
 
+#include "cppclass.hpp"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -18,6 +20,9 @@ int main(int argc, char* argv[])
 
   CppWorkerModule::hello_world();
 
+  CppClass cppclass;
+  engine.rootContext()->setContextProperty("CppClass", &cppclass);
+
   QObject::connect(
     &engine,
     &QQmlApplicationEngine::objectCreationFailed,
@@ -33,6 +38,15 @@ int main(int argc, char* argv[])
   engine.setImportPathList(paths);
   QQuickStyle::setStyle("Material");
   engine.loadFromModule("DataConversionsBetweenCppAndQml", "Main");
+
+  if (engine.rootObjects().isEmpty())
+  {
+    return -1;
+  }
+  else
+  {
+    cppclass.setQmlRootObject(engine.rootObjects().first());
+  }
 
   return app.exec();
 }

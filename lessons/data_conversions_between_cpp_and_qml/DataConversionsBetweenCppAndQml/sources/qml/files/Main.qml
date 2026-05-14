@@ -1,3 +1,3 @@
-import SequenceTypesToJavaScriptArrays
+import VariantListAndVariantMap
 
-SequenceTypesToJavaScriptArrays {}
+VariantListAndVariantMap {}

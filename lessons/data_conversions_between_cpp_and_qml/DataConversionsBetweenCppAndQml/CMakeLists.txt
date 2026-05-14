@@ -363,10 +363,8 @@ target_link_libraries(
   ${CMAKE_PROJECT_NAME}
   PRIVATE Qt6::Quick
           Qt6::QuickControls2
-          BasicDataTypesplugin
-          TimeAndDateTimeplugin
-          SequenceTypesToJavaScriptArraysplugin
-          CppClass
+          VariantListAndVariantMapCppClass
+          VariantListAndVariantMapplugin
           CppWorkerModule
 )
 
