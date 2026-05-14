@@ -28,9 +28,7 @@ int main(int argc, char* argv[])
     },
     Qt::QueuedConnection);
   QStringList paths = engine.importPathList();
-  paths << ":/DataConversionsBetweenCppAndQml"
-        << ":/BasicDataTypes"
-        << ":/TimeAndDateTime";
+  paths << ":/DataConversionsBetweenCppAndQml";
   paths.removeDuplicates();
   engine.setImportPathList(paths);
   QQuickStyle::setStyle("Material");

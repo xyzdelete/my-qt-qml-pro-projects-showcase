@@ -3,7 +3,7 @@ cmake_minimum_required(
 )
 
 project(
-  BasicDataTypes
+  SequenceTypesToJavaScriptArrays
   VERSION 1.0
   LANGUAGES CXX
 )
@@ -16,7 +16,7 @@ qt_add_library(
 target_link_libraries(
   ${PROJECT_NAME}
   PRIVATE Qt6::Quick
-          CppClass
+          SequenceTypesToJavaScriptArraysCppClass
 )
 
 target_include_directories(

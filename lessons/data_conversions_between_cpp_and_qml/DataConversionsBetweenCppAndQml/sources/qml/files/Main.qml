@@ -1,3 +1,3 @@
-import TimeAndDateTime
+import SequenceTypesToJavaScriptArrays
 
-TimeAndDateTime {}
+SequenceTypesToJavaScriptArrays {}

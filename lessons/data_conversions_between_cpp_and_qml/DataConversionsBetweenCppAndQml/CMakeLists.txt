@@ -365,6 +365,7 @@ target_link_libraries(
           Qt6::QuickControls2
           BasicDataTypesplugin
           TimeAndDateTimeplugin
+          SequenceTypesToJavaScriptArraysplugin
           CppClass
           CppWorkerModule
 )
