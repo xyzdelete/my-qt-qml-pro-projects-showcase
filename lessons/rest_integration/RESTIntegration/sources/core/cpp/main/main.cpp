@@ -36,12 +36,5 @@ int main(int argc, char* argv[])
   QQuickStyle::setStyle("Material");
   engine.loadFromModule("RESTIntegration", "Main");
 
-  AppWrapper wrapper;
-
-  if (!wrapper.initialize(&app, &engine))
-  {
-    return -1;
-  }
-
   return app.exec();
 }

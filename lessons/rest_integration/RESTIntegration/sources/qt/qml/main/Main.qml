@@ -1,3 +1,3 @@
-import RESTFactory
+import FetchingPosts
 
-RESTFactory {}
+FetchingPosts {}
