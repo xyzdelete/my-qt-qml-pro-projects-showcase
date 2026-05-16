@@ -1,3 +1,3 @@
-import RESTClientV1
+import RESTFactory
 
-RESTClientV1 {}
+RESTFactory {}

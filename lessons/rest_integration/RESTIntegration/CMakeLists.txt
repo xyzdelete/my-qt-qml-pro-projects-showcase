@@ -202,8 +202,9 @@ target_link_libraries(
   PRIVATE Qt6::Quick
           Qt6::QuickControls2
           CppWorkerModule
-          RESTClientV1
-          RESTClientV1plugin
+          # RESTClientV1 RESTClientV1plugin
+          RESTFactory
+          RESTFactoryplugin
 )
 
 set(
