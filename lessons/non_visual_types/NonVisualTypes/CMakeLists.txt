@@ -40,11 +40,17 @@ endif()
 if(
   WIN32
 )
+  set(
+    VCPKG_PACKAGES_BUILD_PATH
+    "C:/build/tmp"
+    CACHE STRING
+          "VCPKG packages build dir"
+  )
   # Windows path length limit (260 chars) is hit frequently with Qt and other
   # large packages
   set(
     VCPKG_INSTALL_OPTIONS
-    "--x-buildtrees-root=C:/build/tmp"
+    "--x-buildtrees-root=${VCPKG_PACKAGES_BUILD_PATH}"
     CACHE STRING
           "Extra options passed to vcpkg install"
   )
@@ -265,6 +271,8 @@ target_link_libraries(
           FetchingPostsplugin
           CustomTypesCounter
           CustomTypesCounterplugin
+          Enums
+          Enumsplugin
 )
 
 set(

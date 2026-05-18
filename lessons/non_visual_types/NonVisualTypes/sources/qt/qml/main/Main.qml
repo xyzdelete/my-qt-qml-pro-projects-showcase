@@ -1,3 +1,3 @@
-import CustomTypesCounter
+import Enums
 
-CustomTypesCounter {}
+Enums {}
