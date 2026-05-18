@@ -1,6 +1,7 @@
 import CppWorkerModule;
 
 #include "appwrapper.hpp"
+#include "errorlevel.hpp"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -19,6 +20,16 @@ int main(int argc, char* argv[])
   CppWorkerModule::hello_world();
 
   QQmlApplicationEngine engine;
+
+  // qmlRegisterUncreatableType<ErrorLevel>(
+  //   "Enums",
+  //   1,
+  //   0,
+  //   "ErrorLevel",
+  //   "Can not create ErrorLevel type in QML. Not allowed.");
+
+  // If you want to instantiate ErrorLevel in QML:
+  qmlRegisterType<ErrorLevel>("Enums", 1, 0, "ErrorLevel");
 
   QObject::connect(
     &engine,
