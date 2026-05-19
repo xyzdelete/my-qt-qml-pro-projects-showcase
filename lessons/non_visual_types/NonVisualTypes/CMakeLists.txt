@@ -269,10 +269,9 @@ target_link_libraries(
           # RESTClientV1 RESTClientV1plugin RESTFactory RESTFactoryplugin
           FetchingPosts
           FetchingPostsplugin
-          CustomTypesCounter
-          CustomTypesCounterplugin
-          Enums
-          Enumsplugin
+          # CustomTypesCounter CustomTypesCounterplugin Enums Enumsplugin
+          CounterEnumVersion
+          CounterEnumVersionplugin
 )
 
 set(
