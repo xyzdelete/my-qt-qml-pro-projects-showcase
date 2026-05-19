@@ -1,3 +1,3 @@
-import Enums
+import CounterEnumVersion
 
-Enums {}
+CounterEnumVersion {}
