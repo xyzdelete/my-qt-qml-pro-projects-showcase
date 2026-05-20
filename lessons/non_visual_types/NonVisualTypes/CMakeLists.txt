@@ -270,8 +270,9 @@ target_link_libraries(
           FetchingPosts
           FetchingPostsplugin
           # CustomTypesCounter CustomTypesCounterplugin Enums Enumsplugin
-          CounterEnumVersion
-          CounterEnumVersionplugin
+          # CounterEnumVersion CounterEnumVersionplugin
+          ObjectAndListProperties
+          ObjectAndListPropertiesplugin
 )
 
 set(

@@ -49,6 +49,8 @@ ApplicationWindow {
     anchors.fill: parent
     model: team1Id.players
     delegate: Rectangle {
+      id: delegateId
+      required property string name
       width: parent.width
       height: 50
       border.width: 1
@@ -57,7 +59,7 @@ ApplicationWindow {
 
       Text {
         anchors.centerIn: parent
-        text: name
+        text: delegateId.name
         font.pointSize: 20
       }
     }
