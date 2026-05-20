@@ -1,3 +1,3 @@
-import CounterEnumVersion
+import ObjectAndListProperties
 
-CounterEnumVersion {}
+ObjectAndListProperties {}
