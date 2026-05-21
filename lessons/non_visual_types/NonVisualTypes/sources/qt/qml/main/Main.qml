@@ -1,3 +1,3 @@
-import ObjectAndListProperties
+import DefaultProperties
 
-ObjectAndListProperties {}
+DefaultProperties {}

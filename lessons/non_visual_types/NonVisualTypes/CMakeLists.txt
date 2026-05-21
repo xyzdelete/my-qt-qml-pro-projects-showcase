@@ -2,141 +2,10 @@ cmake_minimum_required(
   VERSION 4.3.2
 )
 
-# Option to control static / dynamic build
-option(
-  STATIC
-  "Build with static vcpkg libraries and static runtime"
-  ON
-)
-
-if(
-  STATIC
-)
-  if(
-    WIN32
-  )
-    set(
-      VCPKG_TARGET_TRIPLET
-      "x64-windows-static"
-      CACHE STRING
-            "Vcpkg target triplet"
-            FORCE
-    )
-  endif()
-else()
-  if(
-    WIN32
-  )
-    set(
-      VCPKG_TARGET_TRIPLET
-      "x64-windows"
-      CACHE STRING
-            "Vcpkg target triplet"
-            FORCE
-    )
-  endif()
-endif()
-
-if(
-  WIN32
-)
-  set(
-    VCPKG_PACKAGES_BUILD_PATH
-    "C:/build/tmp"
-    CACHE STRING
-          "VCPKG packages build dir"
-  )
-  # Windows path length limit (260 chars) is hit frequently with Qt and other
-  # large packages
-  set(
-    VCPKG_INSTALL_OPTIONS
-    "--x-buildtrees-root=${VCPKG_PACKAGES_BUILD_PATH}"
-    CACHE STRING
-          "Extra options passed to vcpkg install"
-  )
-endif()
-
 project(
   NonVisualTypes
   VERSION 1.0
   LANGUAGES CXX
-)
-
-# C++ standard
-set(
-  CMAKE_CXX_STANDARD
-  23
-)
-set(
-  CMAKE_CXX_STANDARD_REQUIRED
-  ON
-)
-set(
-  CMAKE_CXX_EXTENSIONS
-  OFF
-)
-set(
-  CMAKE_CXX_SCAN_FOR_MODULES
-  ON
-)
-set(
-  CMAKE_EXPORT_COMPILE_COMMANDS
-  ON
-)
-
-# vcpkg static triplet = static libraries + static runtime. Main project must
-# also use static runtime to match.
-if(
-  STATIC
-)
-  if(
-    MSVC
-  )
-    set(
-      CMAKE_MSVC_RUNTIME_LIBRARY
-      "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-      CACHE STRING
-            ""
-            FORCE
-    )
-  endif()
-else()
-  if(
-    MSVC
-  )
-    set(
-      CMAKE_MSVC_RUNTIME_LIBRARY
-      "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>"
-      CACHE STRING
-            ""
-            FORCE
-    )
-  endif()
-endif()
-
-message(
-  STATUS "QML_IMPORT_PATH: ${QML_IMPORT_PATH}"
-)
-
-if(
-  NOT
-  DEFINED
-  QT_QML_GENERATE_QMLLS_INI
-  OR QT_QML_GENERATE_QMLLS_INI
-     STREQUAL
-     ""
-)
-  set(
-    QT_QML_GENERATE_QMLLS_INI
-    ON
-    CACHE STRING
-          "Generate qmlls.ini files"
-          FORCE
-  )
-endif()
-
-message(
-  STATUS "QT_QML_GENERATE_QMLLS_INI: ${QT_QML_GENERATE_QMLLS_INI}"
 )
 
 find_package(
@@ -182,6 +51,7 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   sources/qt/qml/main/*.qml
 )
+
 file(
   GLOB
   QT_QML_MODULES_DIRS
@@ -190,6 +60,7 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   sources/qt/qml/modules/*
 )
+
 file(
   GLOB
   QT_CPP_MODULES_DIRS
@@ -267,20 +138,21 @@ target_link_libraries(
           Qt6::QuickControls2
           CppWorkerModule
           # RESTClientV1 RESTClientV1plugin RESTFactory RESTFactoryplugin
-          FetchingPosts
-          FetchingPostsplugin
-          # CustomTypesCounter CustomTypesCounterplugin Enums Enumsplugin
-          # CounterEnumVersion CounterEnumVersionplugin
-          ObjectAndListProperties
-          ObjectAndListPropertiesplugin
+          # FetchingPosts FetchingPostsplugin CustomTypesCounter
+          # CustomTypesCounterplugin Enums Enumsplugin CounterEnumVersion
+          # CounterEnumVersionplugin ObjectAndListProperties
+          # ObjectAndListPropertiesplugin InheritedTypes InheritedTypesplugin
+          DefaultProperties
+          DefaultPropertiesplugin
 )
 
 set(
   CMAKE_INSTALL_PREFIX
   "${CMAKE_CURRENT_BINARY_DIR}/package/${CMAKE_PROJECT_NAME}"
-  CACHE PATH
-        "Install path"
-        FORCE
+  CACHE
+    PATH
+    "Root directory where project will be installed when run the install step"
+    FORCE
 )
 
 include(
@@ -288,92 +160,102 @@ include(
 )
 
 if(
-  NOT
-  STATIC
+  USE_VCPKG
 )
-  # This Qt script will not work well with vcpkg Hence we need to manually
-  # provide install commands for each platform if vcpkg is used
-  # qt_generate_deploy_qml_app_script( TARGET ${CMAKE_PROJECT_NAME}
-  # OUTPUT_SCRIPT deploy_script )
-
-  # install( SCRIPT ${deploy_script} )
-
   if(
-    WIN32
+    NOT
+    VCPKG_STATIC_LIBS_LINKING
   )
-    install(
-      TARGETS ${CMAKE_PROJECT_NAME}
-      BUNDLE DESTINATION .
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    if(
+      WIN32
     )
+      install(
+        TARGETS ${CMAKE_PROJECT_NAME}
+        BUNDLE DESTINATION .
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
 
-    # Only do DLL/plugin install for dynamic builds
-    install(
-      FILES "$<TARGET_PDB_FILE:${CMAKE_PROJECT_NAME}>"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-      CONFIGURATIONS Debug
-    )
-    install(
-      DIRECTORY "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-      CONFIGURATIONS
-        Release
-        RelWithDebInfo
-        MinSizeRel
-      FILES_MATCHING
-      PATTERN "*.dll"
-    )
-    install(
-      DIRECTORY "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/debug/bin/"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-      CONFIGURATIONS Debug
-      FILES_MATCHING
-      PATTERN "*.dll"
-      PATTERN "*.pdb"
-    )
-    install(
-      DIRECTORY "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/Qt6/plugins/"
-      DESTINATION Qt6/plugins
-      CONFIGURATIONS
-        Release
-        RelWithDebInfo
-        MinSizeRel
-    )
-    install(
-      DIRECTORY
-        "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/debug/Qt6/plugins/"
-      DESTINATION Qt6/plugins
-      CONFIGURATIONS Debug
-    )
-    install(
-      DIRECTORY "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/Qt6/qml/"
-      DESTINATION Qt6/qml
-      CONFIGURATIONS
-        Release
-        RelWithDebInfo
-        MinSizeRel
-    )
-    install(
-      DIRECTORY "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/debug/Qt6/qml/"
-      DESTINATION Qt6/qml
-      CONFIGURATIONS Debug
-    )
+      # Only do DLL/plugin install for dynamic builds
+      install(
+        FILES "$<TARGET_PDB_FILE:${CMAKE_PROJECT_NAME}>"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        CONFIGURATIONS Debug
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/bin/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        CONFIGURATIONS
+          Release
+          RelWithDebInfo
+          MinSizeRel
+        FILES_MATCHING
+        PATTERN "*.dll"
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/debug/bin/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        CONFIGURATIONS Debug
+        FILES_MATCHING
+        PATTERN "*.dll"
+        PATTERN "*.pdb"
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/Qt6/plugins/"
+        DESTINATION Qt6/plugins
+        CONFIGURATIONS
+          Release
+          RelWithDebInfo
+          MinSizeRel
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/debug/Qt6/plugins/"
+        DESTINATION Qt6/plugins
+        CONFIGURATIONS Debug
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/Qt6/qml/"
+        DESTINATION Qt6/qml
+        CONFIGURATIONS
+          Release
+          RelWithDebInfo
+          MinSizeRel
+      )
+      install(
+        DIRECTORY "${VCPKG_INSTALLED_DIR}/x64-windows/debug/Qt6/qml/"
+        DESTINATION Qt6/qml
+        CONFIGURATIONS Debug
+      )
 
-    set(
-      QT_CONF_FILE
-      "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
-    )
-    file(
-      WRITE
-      "${QT_CONF_FILE}"
-      "[Paths]\nPrefix = ..\nPlugins = Qt6/plugins\nQmlImports = Qt6/qml\n"
-    )
-    install(
-      FILES "${QT_CONF_FILE}"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+      set(
+        QT_CONF_FILE
+        "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+        CACHE PATH
+              "Stores paths of required Qt components"
+              FORCE
+      )
+      file(
+        WRITE
+        "${QT_CONF_FILE}"
+        "[Paths]\nPrefix = ..\nPlugins = Qt6/plugins\nQmlImports = Qt6/qml\n"
+      )
+      install(
+        FILES "${QT_CONF_FILE}"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+    endif()
   endif()
+else()
+  qt_generate_deploy_qml_app_script(
+    TARGET
+    ${CMAKE_PROJECT_NAME}
+    OUTPUT_SCRIPT
+    deploy_script
+  )
+
+  install(
+    SCRIPT ${deploy_script}
+  )
 endif()
 
 file(

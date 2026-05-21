@@ -2,11 +2,11 @@
   "dependencies": [
     {
       "name": "qtbase",
-      "version>=": "6.10.3"
+      "version>=": "6.11.0"
     },
     {
       "name": "qtdeclarative",
-      "version>=": "6.10.3"
+      "version>=": "6.11.0"
     }
   ]
 }

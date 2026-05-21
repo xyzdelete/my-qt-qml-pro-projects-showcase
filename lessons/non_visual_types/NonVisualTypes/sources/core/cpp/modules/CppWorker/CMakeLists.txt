@@ -44,10 +44,10 @@ target_sources(
           HEADERS
           FILES
           ${CPP_HEADERS}
-  PRIVATE FILE_SET
-          CXX_MODULES
-          FILES
-          ${CPP_MODULES}
+  PUBLIC FILE_SET
+         CXX_MODULES
+         FILES
+         ${CPP_MODULES}
 )
 
 target_include_directories(

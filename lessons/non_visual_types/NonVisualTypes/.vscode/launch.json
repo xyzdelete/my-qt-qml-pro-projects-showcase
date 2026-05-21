@@ -1,18 +1,21 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "cppvsdbg",
       "type": "cppvsdbg",
       "request": "launch",
-      "name": "Launch",
       "program": "${command:cmake.launchTargetPath}",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "console": "internalConsole",
-      "stopAtEntry": true
+      "cwd": "${command:cmake.launchTargetDirectory}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "lldb",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      "cwd": "${command:cmake.launchTargetDirectory}",
+      "terminal": "integrated"
     }
   ]
 }
