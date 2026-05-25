@@ -142,8 +142,9 @@ target_link_libraries(
           # CustomTypesCounterplugin Enums Enumsplugin CounterEnumVersion
           # CounterEnumVersionplugin ObjectAndListProperties
           # ObjectAndListPropertiesplugin InheritedTypes InheritedTypesplugin
-          DefaultProperties
-          DefaultPropertiesplugin
+          # DefaultProperties DefaultPropertiesplugin
+          GroupedProperties
+          GroupedPropertiesplugin
 )
 
 set(

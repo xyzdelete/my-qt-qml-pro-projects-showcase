@@ -1,3 +1,3 @@
-import DefaultProperties
+import GroupedProperties
 
-DefaultProperties {}
+GroupedProperties {}
