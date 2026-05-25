@@ -1,3 +1,3 @@
-import MyAttachedProperties
+import PropertyValueSources
 
-MyAttachedProperties {}
+PropertyValueSources {}

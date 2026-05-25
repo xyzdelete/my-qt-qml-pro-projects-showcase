@@ -151,9 +151,10 @@ target_link_libraries(
           # CounterEnumVersionplugin ObjectAndListProperties
           # ObjectAndListPropertiesplugin InheritedTypes InheritedTypesplugin
           # DefaultProperties DefaultPropertiesplugin GroupedProperties
-          # GroupedPropertiesplugin
-          MyAttachedProperties
-          MyAttachedPropertiesplugin
+          # GroupedPropertiesplugin MyAttachedProperties
+          # MyAttachedPropertiesplugin
+          PropertyValueSources
+          PropertyValueSourcesplugin
 )
 
 set(
