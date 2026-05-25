@@ -5,7 +5,6 @@ import CppWorkerModule;
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
-#include <algorithm>
 
 int main(int argc, char* argv[])
 {

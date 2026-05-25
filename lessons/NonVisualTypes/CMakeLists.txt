@@ -63,6 +63,14 @@ file(
 
 file(
   GLOB
+  QT_QML_IMPORT_PATH_MODULES_DIRS
+  LIST_DIRECTORIES true
+  CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/qt/qml/modules/*
+)
+
+file(
+  GLOB
   QT_CPP_MODULES_DIRS
   LIST_DIRECTORIES true
   CONFIGURE_DEPENDS
@@ -85,11 +93,11 @@ qt_add_qml_module(
   RESOURCE_PREFIX
   /${CMAKE_PROJECT_NAME}
   OUTPUT_DIRECTORY
-  ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}
+  ${CMAKE_CURRENT_BINARY_DIR}
   QML_FILES
   ${QT_QML_MAIN}
   IMPORT_PATH
-  ${QT_QML_MODULES_DIRS}
+  ${QT_QML_IMPORT_PATH_MODULES_DIRS}
   SOURCES
   ${CORE_CPP_MAIN}
   RESOURCES
@@ -142,9 +150,10 @@ target_link_libraries(
           # CustomTypesCounterplugin Enums Enumsplugin CounterEnumVersion
           # CounterEnumVersionplugin ObjectAndListProperties
           # ObjectAndListPropertiesplugin InheritedTypes InheritedTypesplugin
-          # DefaultProperties DefaultPropertiesplugin
-          GroupedProperties
-          GroupedPropertiesplugin
+          # DefaultProperties DefaultPropertiesplugin GroupedProperties
+          # GroupedPropertiesplugin
+          MyAttachedProperties
+          MyAttachedPropertiesplugin
 )
 
 set(

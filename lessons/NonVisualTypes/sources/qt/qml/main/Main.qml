@@ -1,3 +1,3 @@
-import GroupedProperties
+import MyAttachedProperties
 
-GroupedProperties {}
+MyAttachedProperties {}
