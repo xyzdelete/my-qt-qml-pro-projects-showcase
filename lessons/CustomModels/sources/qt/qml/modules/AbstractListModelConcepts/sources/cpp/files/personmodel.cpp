@@ -2,12 +2,12 @@
 
 PersonModel::PersonModel(QObject* parent) : QAbstractListModel{parent}
 {
-  addPerson(new Person("Jamie Lannister", "red", 33));
-  addPerson(new Person("Marry Lane", "cyan", 26));
-  addPerson(new Person("Steve Moors", "yellow", 44));
-  addPerson(new Person("Victor Trunk", "dodgerblue", 30));
-  addPerson(new Person("Ariel Geeny", "blue", 33));
-  addPerson(new Person("Knut Vikran", "lightblue", 26));
+  addPerson(new Person("Jamie Lannister", "red", 33, this));
+  addPerson(new Person("Marry Lane", "cyan", 26, this));
+  addPerson(new Person("Steve Moors", "yellow", 44, this));
+  addPerson(new Person("Victor Trunk", "dodgerblue", 30, this));
+  addPerson(new Person("Ariel Geeny", "blue", 33, this));
+  addPerson(new Person("Knut Vikran", "lightblue", 26, this));
 }
 
 int PersonModel::rowCount(const QModelIndex& parent) const
