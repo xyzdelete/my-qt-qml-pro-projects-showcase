@@ -1,3 +1,3 @@
-import StringListModel
+import ObjectListModel
 
-StringListModel {}
+ObjectListModel {}
