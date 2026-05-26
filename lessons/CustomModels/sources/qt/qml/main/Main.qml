@@ -1,3 +1,3 @@
-import DecouplingTheDataFromTheSource
+import ModelListProperties
 
-DecouplingTheDataFromTheSource {}
+ModelListProperties {}
