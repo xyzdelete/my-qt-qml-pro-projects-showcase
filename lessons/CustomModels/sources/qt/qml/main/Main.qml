@@ -1,3 +1,3 @@
-import EditableObjectListModel
+import QPropertyEdits
 
-EditableObjectListModel {}
+QPropertyEdits {}

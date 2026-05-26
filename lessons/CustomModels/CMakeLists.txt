@@ -146,9 +146,10 @@ target_link_libraries(
           Qt6::QuickControls2
           CppWorkerModule
           # StringListModel StringListModelplugin ObjectListModel
-          # ObjectListModelplugin
-          EditableObjectListModel
-          EditableObjectListModelplugin
+          # ObjectListModelplugin EditableObjectListModel
+          # EditableObjectListModelplugin
+          QPropertyEdits
+          QPropertyEditsplugin
 )
 
 set(
