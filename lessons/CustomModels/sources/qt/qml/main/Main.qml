@@ -1,3 +1,3 @@
-import EditableAbstractListModel
+import DecouplingTheDataFromTheSource
 
-EditableAbstractListModel {}
+DecouplingTheDataFromTheSource {}

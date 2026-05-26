@@ -149,8 +149,9 @@ target_link_libraries(
           # ObjectListModelplugin EditableObjectListModel
           # EditableObjectListModelplugin QPropertyEdits QPropertyEditsplugin
           # AbstractListModelConcepts AbstractListModelConceptsplugin
-          EditableAbstractListModel
-          EditableAbstractListModelplugin
+          # EditableAbstractListModel EditableAbstractListModelplugin
+          DecouplingTheDataFromTheSource
+          DecouplingTheDataFromTheSourceplugin
 )
 
 set(
