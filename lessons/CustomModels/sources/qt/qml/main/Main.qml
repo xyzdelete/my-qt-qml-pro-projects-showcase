@@ -1,3 +1,3 @@
-import QPropertyEdits
+import AbstractListModelConcepts
 
-QPropertyEdits {}
+AbstractListModelConcepts {}

@@ -147,9 +147,9 @@ target_link_libraries(
           CppWorkerModule
           # StringListModel StringListModelplugin ObjectListModel
           # ObjectListModelplugin EditableObjectListModel
-          # EditableObjectListModelplugin
-          QPropertyEdits
-          QPropertyEditsplugin
+          # EditableObjectListModelplugin QPropertyEdits QPropertyEditsplugin
+          AbstractListModelConcepts
+          AbstractListModelConceptsplugin
 )
 
 set(

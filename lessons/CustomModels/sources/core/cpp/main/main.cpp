@@ -1,7 +1,5 @@
 import CppWorkerModule;
 
-#include "objectlistwrapper.hpp"
-
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -11,15 +9,29 @@ import CppWorkerModule;
 int main(int argc, char* argv[])
 {
   QGuiApplication app(argc, argv);
-  QQuickStyle::setStyle("Material");
+  app.setOrganizationDomain("github.com/xyzdelete");
+  app.setOrganizationName("xyzdelete");
+  app.setApplicationName("NonVisualTypes");
+
   CppWorkerModule::hello_world();
 
-  ObjectListWrapper wrapper;
+  QQmlApplicationEngine engine;
 
-  if (!wrapper.initialize(&app))
-  {
-    return -1;
-  }
+  QObject::connect(
+    &engine,
+    &QQmlApplicationEngine::objectCreationFailed,
+    &app,
+    []()
+    {
+      QCoreApplication::exit(-1);
+    },
+    Qt::QueuedConnection);
+  QStringList paths = engine.importPathList();
+  paths << ":/CustomModels";
+  paths.removeDuplicates();
+  engine.setImportPathList(paths);
+  QQuickStyle::setStyle("Material");
+  engine.loadFromModule("CustomModels", "Main");
 
   return app.exec();
 }
