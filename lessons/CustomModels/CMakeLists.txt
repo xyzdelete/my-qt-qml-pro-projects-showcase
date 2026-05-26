@@ -148,8 +148,9 @@ target_link_libraries(
           # StringListModel StringListModelplugin ObjectListModel
           # ObjectListModelplugin EditableObjectListModel
           # EditableObjectListModelplugin QPropertyEdits QPropertyEditsplugin
-          AbstractListModelConcepts
-          AbstractListModelConceptsplugin
+          # AbstractListModelConcepts AbstractListModelConceptsplugin
+          EditableAbstractListModel
+          EditableAbstractListModelplugin
 )
 
 set(

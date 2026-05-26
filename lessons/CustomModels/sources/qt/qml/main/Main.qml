@@ -1,3 +1,3 @@
-import AbstractListModelConcepts
+import EditableAbstractListModel
 
-AbstractListModelConcepts {}
+EditableAbstractListModel {}

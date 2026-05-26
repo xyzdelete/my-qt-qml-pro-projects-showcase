@@ -119,7 +119,7 @@ void PersonModel::addPerson()
 
 void PersonModel::addPerson(const QString& names, const int& age)
 {
-  Person* person = new Person(names, "yellowgreen", age, this);
+  Person* person = new Person(names, "yellowgreen", age);
   addPerson(person);
 }
 
