@@ -1,3 +1,3 @@
-import ObjectListModel
+import EditableObjectListModel
 
-ObjectListModel {}
+EditableObjectListModel {}
