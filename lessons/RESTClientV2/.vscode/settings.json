@@ -1,0 +1,12 @@
+{
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "clangd.arguments": [
+    "--compile-commands-dir=${command:cmake.buildDirectory}",
+    "--background-index",
+    "--clang-tidy",
+    "--header-insertion=iwyu",
+    "--completion-style=detailed",
+    "--function-arg-placeholders=false"
+  ],
+  "editor.inlayHints.enabled": "offUnlessPressed"
+}

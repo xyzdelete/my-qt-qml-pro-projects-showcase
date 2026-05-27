@@ -1,0 +1,74 @@
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+ColumnLimit: 80
+UseTab: false
+IndentWidth: 2
+ContinuationIndentWidth: 2
+BracedInitializerIndentWidth: 2
+ConstructorInitializerIndentWidth: 2
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+BreakBeforeBraces: Allman
+BreakAdjacentStringLiterals: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakAfterReturnType: All
+
+# clang-format 22 approach
+BinPackArguments: false
+BinPackParameters: false
+
+# clang-format 23 approach (not released yet)
+# PackArguments:
+#   BinPack: UseBreakAfter
+#   BreakAfter: 2
+# PackParameters:
+#   BinPack: UseBreakAfter
+#   BreakAfter: 2
+
+Cpp11BracedListStyle: true
+
+AlignArrayOfStructures: Right
+
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+AlignAfterOpenBracket: false
+
+BreakAfterOpenBracketBracedList: true
+BreakAfterOpenBracketFunction: true
+BreakAfterOpenBracketIf: true
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeCloseBracketFunction: true
+BreakBeforeCloseBracketIf: true
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: false
+AllowShortNamespacesOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: None
