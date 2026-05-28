@@ -1,0 +1,3 @@
+import PaintingQMLItems
+
+PaintingQMLItems {}

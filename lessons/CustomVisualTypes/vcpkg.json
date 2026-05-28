@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "qtbase",
+    "qtdeclarative"
+  ],
+  "overrides": [
+    {
+      "name": "qtbase",
+      "version": "6.11.0"
+    },
+    {
+      "name": "qtdeclarative",
+      "version": "6.11.0"
+    }
+  ]
+}
