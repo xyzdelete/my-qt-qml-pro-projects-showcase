@@ -1,3 +1,3 @@
-import PaintingQMLItems
+import BarChart
 
-PaintingQMLItems {}
+BarChart {}
