@@ -1,3 +1,3 @@
-import BarChartListProperties
+import VisualComponentsWithTheCanvasElement
 
-BarChartListProperties {}
+VisualComponentsWithTheCanvasElement {}

@@ -146,8 +146,9 @@ target_link_libraries(
           Qt6::QuickControls2
           CppWorkerModule
           # PaintingQMLItems PaintingQMLItemsplugin BarChart BarChartplugin
-          BarChartListProperties
-          BarChartListPropertiesplugin
+          # BarChartListProperties BarChartListPropertiesplugin
+          VisualComponentsWithTheCanvasElement
+          VisualComponentsWithTheCanvasElementplugin
 )
 
 set(
