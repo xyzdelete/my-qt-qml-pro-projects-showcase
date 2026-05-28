@@ -1,3 +1,3 @@
-import BarChart
+import BarChartListProperties
 
-BarChart {}
+BarChartListProperties {}
