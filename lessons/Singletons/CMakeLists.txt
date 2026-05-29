@@ -173,8 +173,9 @@ target_link_libraries(
   PRIVATE Qt6::Quick
           Qt6::QuickControls2
           CppWorkerModule
-          QJsValue
-          QJsValueplugin
+          # QJsValue QJsValueplugin
+          QObject
+          QObjectplugin
 )
 
 set(

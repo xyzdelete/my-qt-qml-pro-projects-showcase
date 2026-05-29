@@ -17,37 +17,21 @@ main(int argc, char* argv[])
 
   CppWorkerModule::hello_world();
 
-  qmlRegisterSingletonType(
-    "QJsValue", 1, 0, "MyApi", SingletonClass::singletonProvider
-  );
+  /*
+  qmlRegisterSingletonType<SingletonClass>("QObject", 1, 0,
+  "MyApi", SingletonClass::singletonProvider);
+  */
 
-  // qmlRegisterSingletonType(
-  //   "QJsValue",
-  //   1,
-  //   0,
-  //   "MyApi", // It's important that MyApi here starts with upppercase,
-  //   otherwise
-  //            // you'll get errors.
-  //   [](QQmlEngine* engine, QJSEngine* scriptEngine) -> QJSValue
-  //   {
-  //     Q_UNUSED(scriptEngine)
-  //     int mValue = 5;
-  //
-  //     QJSValue jsValue = engine->newObject();
-  //     jsValue.setProperty("someProperty", mValue);
-  //
-  //     // Put in an array
-  //     QJSValue mArray = engine->newArray(3);
-  //     for (unsigned int i = 1; i <= 3; ++i)
-  //     {
-  //       mArray.setProperty(i, i * 5);
-  //     }
-  //
-  //     jsValue.setProperty("mArray", mArray);
-  //
-  //     return jsValue;
-  //   }
-  // );
+  /*
+  qmlRegisterSingletonType<SingletonClass>("QObject", 1, 0,
+  "MyApi",
+                                           [](QQmlEngine *engine, QJSEngine
+  *scriptEngine)->QObject *{ Q_UNUSED(engine) Q_UNUSED(scriptEngine)
+
+                                               SingletonClass * example = new
+  SingletonClass(); return example;
+                                           });
+  */
 
   QQmlApplicationEngine engine;
 
