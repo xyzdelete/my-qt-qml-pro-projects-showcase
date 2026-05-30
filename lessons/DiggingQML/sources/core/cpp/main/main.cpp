@@ -23,31 +23,6 @@ main(int argc, char* argv[])
 
   QQmlApplicationEngine engine;
 
-  QQuickView view;
-  view.setSource(QUrl(
-    "qrc:/DiggingQML/VisualTypesThroughQQuickView/sources/qml/files/"
-    "VisualTypesThroughQQuickView.qml"
-  ));
-  view.show();
-
-  QObject* rootObject = view.rootObject();
-  qDebug() << "Root object name is : " << rootObject->objectName();
-
-  // Hijack the qml and change it before handing  control over
-  // to the event loop.
-  QObject* object = rootObject->findChild<QObject*>("rect");
-  if (object)
-  {
-    QQuickItem* item = qobject_cast<QQuickItem*>(object);
-
-    // Modify its properties
-    QColor color(Qt::blue);
-    item->setProperty("color", color);
-    item->setProperty("width", QVariant::fromValue(600));
-    item->setProperty("height", QVariant::fromValue(600));
-    QQmlProperty::write(item, "height", QVariant::fromValue(800));
-  }
-
   QObject::connect(
     &engine,
     &QQmlApplicationEngine::objectCreationFailed,
@@ -64,6 +39,44 @@ main(int argc, char* argv[])
   engine.setImportPathList(paths);
 
   engine.loadFromModule("DiggingQML", "Main");
+
+  QObject* rootObject = engine.rootObjects().first();
+
+  // Show item count
+  qDebug() << "Item count : " << rootObject->children().count();
+  qDebug() << "Object name : " << rootObject->objectName();
+
+  // Find the rectangles
+  QList<QQuickItem*> list = rootObject->findChildren<QQuickItem*>("rect");
+  if (list.count() > 0)
+  {
+    qDebug() << "Rectangle count " << list.count();
+    foreach (QQuickItem* item, list)
+    {
+      qDebug() << "-----------ITEM-------------";
+      qDebug() << "The color is : " << item->property("color").toString();
+
+      QVariant varColor = item->property("color");
+
+      QColor color = varColor.value<QColor>();
+
+      qDebug() << "The color components : " << color.red() << " "
+               << color.green() << " " << color.blue();
+
+      if (color.green() > 0)
+      {
+        item->setProperty("radius", 30);
+      }
+      if (color.blue() > 0)
+      {
+        item->setProperty("height", 200);
+      }
+    }
+  }
+
+  // Find Text Area
+  QQuickItem* quickItem = rootObject->findChild<QQuickItem*>("myTextArea");
+  quickItem->setProperty("text", "Text from C++");
 
   return app.exec();
 }

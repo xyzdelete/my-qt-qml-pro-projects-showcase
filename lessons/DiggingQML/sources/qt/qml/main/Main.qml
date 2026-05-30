@@ -1,3 +1,3 @@
-import VisualTypesThroughQQuickView
+import QQmlApplicationEngine
 
-VisualTypesThroughQQuickView {}
+QQmlApplicationEngine {}
