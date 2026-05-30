@@ -1,13 +1,13 @@
 import CppWorkerModule;
 
-#include "footballteam.hpp"
-#include "player.hpp"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlProperty>
+#include <QQuickItem>
 #include <QQuickStyle>
+#include <QQuickView>
 #include <QQuickWindow>
 
 int
@@ -23,30 +23,29 @@ main(int argc, char* argv[])
 
   QQmlApplicationEngine engine;
 
-  // Register Types
-  qmlRegisterType<Player>("ParseCustomQmlType", 1, 0, "Player");
-  qmlRegisterType<FootBallTeam>("ParseCustomQmlType", 1, 0, "FootballTeam");
+  QQuickView view;
+  view.setSource(QUrl(
+    "qrc:/DiggingQML/VisualTypesThroughQQuickView/sources/qml/files/"
+    "VisualTypesThroughQQuickView.qml"
+  ));
+  view.show();
 
-  QQmlComponent component(
-    &engine,
-    ":/DiggingQML/ParseCustomQmlType/sources/qml/files/"
-    "ParseCustomQmlType.qml"
-  );
+  QObject* rootObject = view.rootObject();
+  qDebug() << "Root object name is : " << rootObject->objectName();
 
-  FootBallTeam* team = qobject_cast<FootBallTeam*>(
-    component.create()
-  ); // FootBallTeam is the root element in the QML file
-
-  if (team && team->captain())
+  // Hijack the qml and change it before handing  control over
+  // to the event loop.
+  QObject* object = rootObject->findChild<QObject*>("rect");
+  if (object)
   {
-    qDebug() << "Team : " << team->title()
-             << " , captain is : " << team->captain()->name();
-    qDebug() << "The players are : ";
+    QQuickItem* item = qobject_cast<QQuickItem*>(object);
 
-    for (int i = 0; i < team->playerCountCustom(); i++)
-    {
-      qDebug() << " " << team->playerCustom(i)->name();
-    }
+    // Modify its properties
+    QColor color(Qt::blue);
+    item->setProperty("color", color);
+    item->setProperty("width", QVariant::fromValue(600));
+    item->setProperty("height", QVariant::fromValue(600));
+    QQmlProperty::write(item, "height", QVariant::fromValue(800));
   }
 
   QObject::connect(

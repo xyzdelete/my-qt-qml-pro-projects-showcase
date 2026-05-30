@@ -1,3 +1,3 @@
-import ParseCustomQmlType
+import VisualTypesThroughQQuickView
 
-ParseCustomQmlType {}
+VisualTypesThroughQQuickView {}
