@@ -1,3 +1,3 @@
-import QQmlApplicationEngine
+import CatchingQMLSignals
 
-QQmlApplicationEngine {}
+CatchingQMLSignals {}
