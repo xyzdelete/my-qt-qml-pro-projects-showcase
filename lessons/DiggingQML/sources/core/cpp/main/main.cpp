@@ -33,6 +33,7 @@ main(int argc, char* argv[])
     },
     Qt::QueuedConnection
   );
+
   QStringList paths = engine.importPathList();
   paths << ":/DiggingQML";
   paths.removeDuplicates();
@@ -40,43 +41,24 @@ main(int argc, char* argv[])
 
   engine.loadFromModule("DiggingQML", "Main");
 
-  QObject* rootObject = engine.rootObjects().first();
+  QObject* rootObject = engine.rootObjects()[0];
 
-  // Show item count
-  qDebug() << "Item count : " << rootObject->children().count();
-  qDebug() << "Object name : " << rootObject->objectName();
+  QObject* funcContext = rootObject->findChild<QObject*>("deep2");
 
-  // Find the rectangles
-  QList<QQuickItem*> list = rootObject->findChildren<QQuickItem*>("rect");
-  if (list.count() > 0)
+  if (funcContext)
   {
-    qDebug() << "Rectangle count " << list.count();
-    foreach (QQuickItem* item, list)
-    {
-      qDebug() << "-----------ITEM-------------";
-      qDebug() << "The color is : " << item->property("color").toString();
+    qDebug() << "Found the object";
+    QVariant returnValue;
+    QVariant parameter = "C++ Parameter";
 
-      QVariant varColor = item->property("color");
-
-      QColor color = varColor.value<QColor>();
-
-      qDebug() << "The color components : " << color.red() << " "
-               << color.green() << " " << color.blue();
-
-      if (color.green() > 0)
-      {
-        item->setProperty("radius", 30);
-      }
-      if (color.blue() > 0)
-      {
-        item->setProperty("height", 200);
-      }
-    }
+    QMetaObject::invokeMethod(
+      funcContext,
+      "qmlFunction",
+      Q_RETURN_ARG(QVariant, returnValue),
+      Q_ARG(QVariant, parameter)
+    );
+    qDebug() << "This is C++, return value is : " << returnValue.toString();
   }
-
-  // Find Text Area
-  QQuickItem* quickItem = rootObject->findChild<QQuickItem*>("myTextArea");
-  quickItem->setProperty("text", "Text from C++");
 
   return app.exec();
 }
