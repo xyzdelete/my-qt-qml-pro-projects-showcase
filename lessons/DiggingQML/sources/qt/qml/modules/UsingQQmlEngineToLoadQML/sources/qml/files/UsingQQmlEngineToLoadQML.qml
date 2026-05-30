@@ -5,6 +5,7 @@ import QtQuick.Controls
 
 ApplicationWindow {
   id: root
+  objectName: "ApplicationWindow"
   visible: true
   Material.foreground: "black"
   width: 1280

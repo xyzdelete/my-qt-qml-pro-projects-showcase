@@ -1,3 +1,3 @@
-import UsingQQmlEngineToLoadQML
+import ParseCustomQmlType
 
-UsingQQmlEngineToLoadQML {}
+ParseCustomQmlType {}
