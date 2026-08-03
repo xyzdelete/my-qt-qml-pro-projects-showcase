@@ -1,0 +1,27 @@
+{
+  "dependencies": [
+    {
+      "name": "qtbase"
+    },
+    {
+      "name": "qtbase",
+      "features": [
+        "windeployqt"
+      ],
+      "platform": "windows"
+    },
+    {
+      "name": "qtdeclarative"
+    }
+  ],
+  "overrides": [
+    {
+      "name": "qtbase",
+      "version": "6.11.1"
+    },
+    {
+      "name": "qtdeclarative",
+      "version": "6.11.1"
+    }
+  ]
+}

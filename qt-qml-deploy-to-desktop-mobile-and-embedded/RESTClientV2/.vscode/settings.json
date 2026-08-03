@@ -1,0 +1,16 @@
+{
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.inlayHints.parameterNames.enabled": true,
+  "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
+  "C_Cpp.inlayHints.referenceOperator.enabled": true,
+  // "clangd.arguments": [
+  //   "--compile-commands-dir=${command:cmake.buildDirectory}",
+  //   "--background-index",
+  //   "--clang-tidy",
+  //   "--header-insertion=iwyu",
+  //   "--completion-style=detailed",
+  //   "--function-arg-placeholders=false"
+  // ],
+  //"editor.inlayHints.enabled": "offUnlessPressed"
+}
