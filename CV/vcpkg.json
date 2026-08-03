@@ -1,0 +1,77 @@
+{
+  "dependencies": [
+    {
+      "name": "qtbase",
+      "platform": "!android & !emscripten"
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "widgets",
+        "async-io",
+        "brotli",
+        "concurrent",
+        "dnslookup",
+        "doubleconversion",
+        "egl",
+        "freetype",
+        "gles2",
+        "gui",
+        "harfbuzz",
+        "jpeg",
+        "network",
+        "opengl",
+        "openssl",
+        "pcre2",
+        "png",
+        "sessionmanager",
+        "testlib",
+        "thread",
+        "zstd"
+      ],
+      "platform": "android"
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "widgets",
+        "async-io",
+        "brotli",
+        "concurrent",
+        "doubleconversion",
+        "freetype",
+        "gles2",
+        "gui",
+        "harfbuzz",
+        "jpeg",
+        "network",
+        "opengl",
+        "pcre2",
+        "png",
+        "thread",
+        "zstd"
+      ],
+      "platform": "emscripten"
+    },
+    {
+      "name": "qtbase",
+      "features": [
+        "windeployqt"
+      ],
+      "platform": "windows"
+    },
+    "qtdeclarative"
+  ],
+  "overrides": [
+    {
+      "name": "qtbase",
+      "version": "6.11.1"
+    },
+    {
+      "name": "qtdeclarative",
+      "version": "6.11.1"
+    }
+  ]
+}
