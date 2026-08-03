@@ -1,0 +1,3 @@
+import QObject
+
+QObject {}

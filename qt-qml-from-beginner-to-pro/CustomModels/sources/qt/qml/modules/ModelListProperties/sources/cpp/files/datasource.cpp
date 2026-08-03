@@ -1,0 +1,62 @@
+#include "datasource.hpp"
+
+DataSource::DataSource(QObject* parent) : QObject(parent)
+{
+  //    addPerson(new Person("Jamie Lannister","red",33, this));
+  //    addPerson(new Person("Marry Lane","cyan",26, this));
+  //    addPerson(new Person("Steve Moors","yellow",44, this));
+  //    addPerson(new Person("Victor Trunk","dodgerblue",30, this));
+  //    addPerson(new Person("Ariel Geeny","blue",33, this));
+  //    addPerson(new Person("Knut Vikran","lightblue",26, this));
+}
+
+QList<Person*> DataSource::dataItems()
+{
+  return mPersons;
+}
+
+void DataSource::addPerson(Person* person)
+{
+  emit prePersonAdded();
+  mPersons.append(person);
+  emit postPersonAdded();
+}
+
+void DataSource::addPerson()
+{
+  Person* person = new Person("Added Person", "yellowgreen", 45, this);
+  addPerson(person);
+}
+
+void DataSource::addPerson(const QString& names, const int& age)
+{
+  Person* person = new Person(names, "yellowgreen", age);
+  addPerson(person);
+}
+
+void DataSource::removePerson(int index)
+{
+  emit prePersonRemoved(index);
+  mPersons.removeAt(index);
+  emit postPersonRemoved();
+}
+
+void DataSource::removeLastPerson()
+{
+  removePerson(mPersons.size() - 1);
+}
+
+int DataSource::personCount()
+{
+  return mPersons.count();
+}
+
+Person* DataSource::personAt(int index)
+{
+  return mPersons[index];
+}
+
+void DataSource::clearPersons()
+{
+  mPersons.clear();
+}
