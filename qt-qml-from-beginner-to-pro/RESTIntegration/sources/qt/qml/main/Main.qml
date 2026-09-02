@@ -1,0 +1,3 @@
+import FetchingPosts
+
+FetchingPosts {}

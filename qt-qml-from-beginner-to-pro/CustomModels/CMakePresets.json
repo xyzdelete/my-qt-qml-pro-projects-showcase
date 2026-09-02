@@ -1,0 +1,360 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "$env{SystemDrive}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_EXPERIMENTAL_CXX_IMPORT_STD": "451f2fe2-a8a2-47c3-bc32-94786d8fc91b",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_MODULE_STD": "ON",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "ON",
+        "VCPKG_INSTALLED_DIR": "$env{SystemDrive}/vcpkg_installed",
+        "VCPKG_INSTALL_OPTIONS": "--x-buildtrees-root=$env{SystemDrive}/vcpkg_buildtrees",
+        "QT_QML_GENERATE_QMLLS_INI": "ON",
+        "USE_VCPKG": "ON"
+      }
+    },
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-windows-static-md",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "x64-windows-static",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "x64-windows",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "arm64-windows-static-md",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-static-md",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>",
+        "CMAKE_C_COMPILER": "$env{VCToolsInstallDir}bin/Hostx64/arm64/cl.exe",
+        "CMAKE_CXX_COMPILER": "$env{VCToolsInstallDir}bin/Hostx64/arm64/cl.exe",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "arm64-windows",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-windows",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>",
+        "CMAKE_C_COMPILER": "$env{VCToolsInstallDir}bin/Hostx64/arm64/cl.exe",
+        "CMAKE_CXX_COMPILER": "$env{VCToolsInstallDir}bin/Hostx64/arm64/cl.exe",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "linux-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {},
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "x64-linux",
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "x64-linux-dynamic",
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "arm64-linux",
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux",
+        "CMAKE_C_COMPILER": "aarch64-linux-gnu-gcc",
+        "CMAKE_CXX_COMPILER": "aarch64-linux-gnu-g++",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "arm64-linux-dynamic",
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-dynamic",
+        "CMAKE_C_COMPILER": "aarch64-linux-gnu-gcc",
+        "CMAKE_CXX_COMPILER": "aarch64-linux-gnu-g++",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "osx-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "arm64-osx",
+      "inherits": "osx-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-osx",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "arm64-osx-dynamic",
+      "inherits": "osx-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-dynamic",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "arm64-ios",
+      "inherits": "osx-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-ios",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "26.0",
+        "VCPKG_STATIC_LIBS_LINKING": "ON"
+      }
+    },
+    {
+      "name": "android-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "Android",
+        "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK}",
+        "CMAKE_ANDROID_STL_TYPE": "c++_static",
+        "CMAKE_ANDROID_API": "36",
+        "CMAKE_C_COMPILER": "$env{ANDROID_NDK}/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+        "CMAKE_CXX_COMPILER": "$env{ANDROID_NDK}/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "arm64-android",
+      "inherits": "android-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-android",
+        "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    },
+    {
+      "name": "x64-android",
+      "inherits": "android-base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-android",
+        "CMAKE_ANDROID_ARCH_ABI": "x86_64",
+        "VCPKG_STATIC_LIBS_LINKING": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "x64-windows-static-md-release",
+      "configurePreset": "x64-windows-static-md",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-windows-static-md-debug",
+      "configurePreset": "x64-windows-static-md",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-windows-static-release",
+      "configurePreset": "x64-windows-static",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-windows-static-debug",
+      "configurePreset": "x64-windows-static",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-windows-release",
+      "configurePreset": "x64-windows",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-windows-debug",
+      "configurePreset": "x64-windows",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-windows-static-md-release",
+      "configurePreset": "arm64-windows-static-md",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-windows-static-md-debug",
+      "configurePreset": "arm64-windows-static-md",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-windows-release",
+      "configurePreset": "arm64-windows",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-windows-debug",
+      "configurePreset": "arm64-windows",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-linux-release",
+      "configurePreset": "x64-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-linux-dynamic-release",
+      "configurePreset": "x64-linux-dynamic",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-linux-dynamic-debug",
+      "configurePreset": "x64-linux-dynamic",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-linux-release",
+      "configurePreset": "arm64-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-linux-debug",
+      "configurePreset": "arm64-linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-linux-dynamic-release",
+      "configurePreset": "arm64-linux-dynamic",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-linux-dynamic-debug",
+      "configurePreset": "arm64-linux-dynamic",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-osx-release",
+      "configurePreset": "arm64-osx",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-osx-debug",
+      "configurePreset": "arm64-osx",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-osx-dynamic-release",
+      "configurePreset": "arm64-osx-dynamic",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-osx-dynamic-debug",
+      "configurePreset": "arm64-osx-dynamic",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-ios-release",
+      "configurePreset": "arm64-ios",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-ios-debug",
+      "configurePreset": "arm64-ios",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-android-release",
+      "configurePreset": "arm64-android",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-android-debug",
+      "configurePreset": "arm64-android",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-android-release",
+      "configurePreset": "x64-android",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-android-debug",
+      "configurePreset": "x64-android",
+      "configuration": "Debug"
+    }
+  ]
+}
