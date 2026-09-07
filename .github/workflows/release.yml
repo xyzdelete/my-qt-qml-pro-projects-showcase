@@ -234,7 +234,16 @@ jobs:
           VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
           VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
         run: |
-          cmake --preset host-x64-linux-target-arm64-linux-release
+          for attempt in 1 2 3; do
+            if cmake --preset host-x64-linux-target-arm64-linux-release; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            echo "CMake configuration failed; retrying in 30 seconds (attempt $((attempt + 1)) of 3)."
+            sleep 30
+          done
           cmake --build --preset host-x64-linux-target-arm64-linux-release-build
       - name: Package ARM64 DEB and TGZ
         run: |
