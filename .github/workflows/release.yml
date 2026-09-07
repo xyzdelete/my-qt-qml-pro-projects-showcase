@@ -370,6 +370,8 @@ jobs:
           BUILD_ROOT: ${{ runner.temp }}/build
           VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
           VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+          VCPKG_MAX_CONCURRENCY: 2
         run: |
           cmake --preset host-x64-windows-target-wasm32-emscripten
           cmake --build --preset host-x64-windows-target-wasm32-emscripten-release
