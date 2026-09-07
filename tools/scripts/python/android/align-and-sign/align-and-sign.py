@@ -279,8 +279,8 @@ def check_keystore_certificates(keytool: Path, keystore: Path, password: str) ->
     if result.returncode != 0:
         die(
             ExitCode.KEYSTORE_NO_CERTIFICATES,
-            f"keytool could not read {keystore} (wrong password, or not a "
-            f"valid keystore):\n{result.stderr.strip()}",
+            f"keytool could not read {keystore} (wrong password, or not a valid "
+            "keystore)",
         )
     if "contains 0 entries" in result.stdout:
         die(ExitCode.KEYSTORE_NO_CERTIFICATES, f"{keystore} contains no certificates")
