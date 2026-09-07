@@ -222,6 +222,14 @@ jobs:
           "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
           echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
           "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Download libmount source
+        run: |
+          curl --fail --location --http1.1 --retry 5 --retry-all-errors \
+            --output "$VCPKG_ROOT/downloads/util-linux-2.41.3.tar.xz" \
+            https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.41/util-linux-2.41.3.tar.xz
+          printf '%s  %s\n' \
+            3d299f0e05a4c982a04dbcbaaeff1222152feedf51c56c5dbdeb75999c68269d652a994f5cdf4c1ee42bb7b28475dd0792192c299fd9bc3b45198c5b153dad00 \
+            "$VCPKG_ROOT/downloads/util-linux-2.41.3.tar.xz" | sha512sum --check
       - name: Configure and build
         env:
           BUILD_ROOT: ${{ runner.temp }}/build
