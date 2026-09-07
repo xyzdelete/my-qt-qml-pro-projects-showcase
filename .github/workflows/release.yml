@@ -229,7 +229,6 @@ jobs:
           BUILD_ROOT: ${{ runner.temp }}/build
           VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
           VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
-          PKG_CONFIG: aarch64-linux-gnu-pkg-config
         run: |
           cmake --preset host-x64-linux-target-arm64-linux-release
           cmake --build --preset host-x64-linux-target-arm64-linux-release-build --parallel 2
