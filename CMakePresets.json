@@ -30,7 +30,9 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "VCPKG_HOST_TRIPLET": "x64-windows-static-release"
+        "VCPKG_HOST_TRIPLET": "x64-windows-static-release",
+        "CMAKE_CXX_MODULE_STD": "OFF",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF"
       },
       "condition": {
         "type": "equals",
@@ -264,7 +266,8 @@
         "VCPKG_STATIC_LINKAGE": "ON",
         "CMAKE_SYSROOT": "$env{ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/windows-x86_64/sysroot",
         "VCPKG_HOST_TRIPLET": "x64-windows-static-release",
-        "ANDROID_NDK_HOST_SYSTEM_NAME": "windows-x86_64"
+        "ANDROID_NDK_HOST_SYSTEM_NAME": "windows-x86_64",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF"
       },
       "condition": {
         "type": "equals",
@@ -337,6 +340,7 @@
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/tools/vcpkg-custom-triplets",
         "VCPKG_STATIC_LINKAGE": "ON",
         "CMAKE_CXX_MODULE_STD": "OFF",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
         "EMSCRIPTEN": "ON"
       },
       "condition": {
