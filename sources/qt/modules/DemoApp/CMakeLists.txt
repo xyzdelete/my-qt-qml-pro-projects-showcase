@@ -414,15 +414,7 @@ elseif(
   file(
     GENERATE
     OUTPUT "${APP_DESKTOP_FILE}"
-    CONTENT "[Desktop Entry]\n"
-            "Type=Application\n"
-            "Name=${PROJECT_NAME}\n"
-            "Comment=${PROJECT_NAME}\n"
-            "Exec=${PROJECT_NAME}\n"
-            "Icon=${PROJECT_ID}\n"
-            "Terminal=false\n"
-            "Categories=Utility;\n"
-            "StartupNotify=true\n"
+    CONTENT "[Desktop Entry]\nType=Application\nName=${PROJECT_NAME}\nComment=${PROJECT_NAME}\nExec=${PROJECT_NAME}\nIcon=${PROJECT_ID}\nTerminal=false\nCategories=Utility;\nStartupNotify=true\n"
   )
 
   install(
