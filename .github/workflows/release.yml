@@ -346,6 +346,8 @@ jobs:
           [IO.File]::WriteAllBytes('.android-keystore\aa-android-release-sign-keystore.jks', [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
       - name: Configure and build APK/AAB
         env:
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+          VCPKG_MAX_CONCURRENCY: 2
           BUILD_ROOT: ${{ runner.temp }}/build
           VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
           VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
