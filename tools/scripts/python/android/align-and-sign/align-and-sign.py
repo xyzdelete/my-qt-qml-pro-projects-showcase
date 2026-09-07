@@ -129,9 +129,9 @@ class ExitCode(IntEnum):
     SUBPROCESS_FAILED = 20
 
 
-def die(code: ExitCode, message: str) -> NoReturn:
-    """Print ``message`` to stderr and exit the process with ``code``."""
-    print(f"error: {message}", file=sys.stderr)
+def die(code: ExitCode, _message: str) -> NoReturn:
+    """Report a failure without echoing potentially sensitive details."""
+    print("error: operation failed", file=sys.stderr)
     raise SystemExit(int(code))
 
 
