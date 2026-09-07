@@ -273,6 +273,7 @@
       "inherits": "host-windows-target-android-base",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-android",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
         "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a"
       }
     },
