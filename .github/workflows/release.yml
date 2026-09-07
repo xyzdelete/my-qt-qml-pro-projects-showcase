@@ -184,21 +184,12 @@ jobs:
         run: |
           cmake --preset host-x64-linux-target-x64-linux-release
           cmake --build --preset host-x64-linux-target-x64-linux-release-build
-      - name: Locate CPack config
-        id: cpackcfg
-        run: |
-          build="$RUNNER_TEMP/build/host-x64-linux-target-x64-linux-release"
-          cfg="$(find "$build" -type f -name 'CPackConfig.cmake' | head -n 1)"
-          if [ -z "$cfg" ]; then
-            echo "CPackConfig.cmake not found under $build"
-            exit 1
-          fi
-          echo "Found CPack config: $cfg"
-          echo "cfg=$cfg" >> "$GITHUB_OUTPUT"
       - name: Package DEB and TGZ
         run: |
-          cmake --install "$RUNNER_TEMP/build/host-x64-linux-target-x64-linux-release" --config Release
-          cpack --config "${{ steps.cpackcfg.outputs.cfg }}" -C Release
+          build="$RUNNER_TEMP/build/host-x64-linux-target-x64-linux-release"
+          cmake --install "$build" --config Release
+          cpack -G DEB -C Release --working-directory "$build"
+          cpack -G TGZ -C Release --working-directory "$build"
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ github.ref_name }}-x64-linux
