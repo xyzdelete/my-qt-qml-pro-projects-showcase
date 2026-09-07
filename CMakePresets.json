@@ -148,7 +148,8 @@
       "name": "host-x64-linux-target-arm64-linux-release",
       "inherits": "host-x64-linux-target-arm64-linux",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-linux-release"
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-release",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/tools/vcpkg-custom-triplets"
       }
     },
     {
