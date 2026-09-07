@@ -58,6 +58,8 @@ jobs:
           & "C:\vcpkg\vcpkg.exe" version
       - name: Configure and build
         env:
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+          VCPKG_MAX_CONCURRENCY: 2
           VCPKG_INSTALLED_ROOT: C:\vi
           VCPKG_BUILDTREES_ROOT: C:\vb
         run: |
