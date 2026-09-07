@@ -227,8 +227,7 @@
       "inherits": "android-base",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_STATIC_LINKAGE": "ON",
-        "CMAKE_SYSROOT": "$env{ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/windows-x86_64/sysroot"
+        "VCPKG_STATIC_LINKAGE": "ON"
       },
       "condition": {
         "type": "equals",
@@ -257,8 +256,7 @@
       "inherits": "android-base",
       "hidden": true,
       "cacheVariables": {
-        "VCPKG_STATIC_LINKAGE": "ON",
-        "CMAKE_SYSROOT": "$env{ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+        "VCPKG_STATIC_LINKAGE": "ON"
       },
       "condition": {
         "type": "equals",
