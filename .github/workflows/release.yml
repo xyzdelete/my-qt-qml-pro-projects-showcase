@@ -1,0 +1,460 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*-v*-release'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VCPKG_BASELINE: 04a9d8e5212d01ee1dd9478eadd9caade4f8b0d4
+
+jobs:
+  host-x64-windows-target-x64-windows-static-release:
+    name: host-x64-windows-target-x64-windows-static-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - name: Install NSIS and verify packaging tools
+        run: |
+          choco --version
+          choco install nsis --no-progress --yes
+          $nsisPath = "${env:ProgramFiles(x86)}/NSIS"
+          if (-not (Test-Path "$nsisPath/makensis.exe")) { throw "NSIS was not found at $nsisPath" }
+          $env:Path = "$nsisPath;$env:Path"
+          $nsisPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          makensis /VERSION
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Configure and build
+        env:
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          $env:BUILD_ROOT = "D:/build"
+          cmake --preset host-x64-windows-target-x64-windows-static-release
+          cmake --build --preset host-x64-windows-target-x64-windows-static-release-build --parallel
+      - name: Package NSIS and ZIP
+        run: |
+          $build = "D:/build/host-x64-windows-target-x64-windows-static-release"
+          cmake --install $build --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-x64-windows-static-release
+          path: |
+            D:/build/host-x64-windows-target-x64-windows-static-release/*.zip
+            D:/build/host-x64-windows-target-x64-windows-static-release/*.exe
+          if-no-files-found: error
+
+  host-arm64-osx-target-arm64-osx-release:
+    name: host-arm64-osx-target-arm64-osx-release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Report Apple Clang compiler
+        run: |
+          clang --version
+          clang++ --version
+      - name: Install macOS build prerequisites
+        run: |
+          brew install autoconf autoconf-archive automake libtool
+          libtool_bin="$(brew --prefix libtool)/libexec/gnubin"
+          export PATH="$libtool_bin:$PATH"
+          echo "$libtool_bin" >> "$GITHUB_PATH"
+          autoconf --version
+          automake --version
+          libtoolize --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-arm64-osx-target-arm64-osx-release
+          cmake --build --preset host-arm64-osx-target-arm64-osx-release-build --parallel
+      - name: Package DragNDrop and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-arm64-osx-target-arm64-osx-release"
+          cmake --install "$build" --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-osx-release
+          path: |
+            ${{ runner.temp }}/build/host-arm64-osx-target-arm64-osx-release/*.dmg
+            ${{ runner.temp }}/build/host-arm64-osx-target-arm64-osx-release/*.tar.gz
+          if-no-files-found: error
+
+  host-x64-linux-target-x64-linux-release:
+    name: host-x64-linux-target-x64-linux-release
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Install Linux tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes autoconf autoconf-archive automake build-essential curl file gcc g++ libegl1-mesa-dev libglu1-mesa-dev libice-dev libltdl-dev libsm-dev libtool libx11-xcb-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxrender-dev ninja-build patchelf '^libxcb.*-dev'
+      - name: Report GCC compiler
+        run: |
+          gcc --version
+          g++ --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-linux-target-x64-linux-release
+          cmake --build --preset host-x64-linux-target-x64-linux-release-build --parallel
+      - name: Package DEB and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-x64-linux-target-x64-linux-release"
+          cmake --install "$build" --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-x64-linux-release
+          path: |
+            ${{ runner.temp }}/build/host-x64-linux-target-x64-linux-release/*.deb
+            ${{ runner.temp }}/build/host-x64-linux-target-x64-linux-release/*.tar.gz
+          if-no-files-found: error
+
+  host-arm64-linux-target-arm64-linux-release:
+    name: host-arm64-linux-target-arm64-linux-release
+    runs-on: ubuntu-26.04-arm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - name: Install Linux tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes autoconf autoconf-archive automake build-essential curl file gcc g++ libegl1-mesa-dev libglu1-mesa-dev libice-dev libltdl-dev libsm-dev libtool libx11-xcb-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxrender-dev ninja-build patchelf '^libxcb.*-dev'
+      - name: Report GCC compiler
+        run: |
+          gcc --version
+          g++ --version
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout "$VCPKG_BASELINE"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/vcpkg/vcpkg" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: ${{ runner.temp }}/build
+          VCPKG_INSTALLED_ROOT: ${{ runner.temp }}/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: ${{ runner.temp }}/vcpkg-buildtrees
+        run: |
+          cmake --preset host-arm64-linux-target-arm64-linux-release
+          cmake --build --preset host-arm64-linux-target-arm64-linux-release-build --parallel
+      - name: Package ARM64 DEB and TGZ
+        run: |
+          build="$RUNNER_TEMP/build/host-arm64-linux-target-arm64-linux-release"
+          cmake --install "$build" --config Release
+          cpack --config "$build/CPackConfig.cmake" -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-linux-release
+          path: |
+            ${{ runner.temp }}/build/host-arm64-linux-target-arm64-linux-release/*.deb
+            ${{ runner.temp }}/build/host-arm64-linux-target-arm64-linux-release/*.tar.gz
+          if-no-files-found: error
+
+  host-x64-windows-target-arm64-android-release:
+    name: host-x64-windows-target-arm64-android-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK and NDK
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.3.13750724"
+          $androidNdkHome = (Join-Path $env:ANDROID_HOME "ndk\27.3.13750724").Replace("\", "/")
+          "ANDROID_NDK_HOME=$androidNdkHome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          java -version
+          sdkmanager --version
+          adb version
+          & "$env:ANDROID_NDK_HOME/ndk-build.cmd" --version
+      - name: Verify Android APK signing tools
+        run: |
+          $buildToolsDir = Join-Path $env:ANDROID_HOME "build-tools\35.0.0"
+          $zipalign = Join-Path $buildToolsDir "zipalign.exe"
+          $apksigner = Join-Path $buildToolsDir "apksigner.bat"
+          if (-not (Test-Path $zipalign -PathType Leaf)) { throw "zipalign was not found at $zipalign" }
+          if (-not (Test-Path $apksigner -PathType Leaf)) { throw "apksigner was not found at $apksigner" }
+          $buildToolsDir.Replace("\", "/") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Output "zipalign: $zipalign"
+          Write-Output "zipalign file version: $((Get-Item $zipalign).VersionInfo.FileVersion)"
+          & $zipalign -h 2>&1
+          if ($LASTEXITCODE -ne 0) { throw "zipalign version check failed with exit code $LASTEXITCODE" }
+          Write-Output "apksigner: $apksigner"
+          & $apksigner version
+          if ($LASTEXITCODE -ne 0) { throw "apksigner version check failed with exit code $LASTEXITCODE" }
+      - name: Report Android NDK Clang ARM64 cross compiler
+        run: |
+          $toolchainBin = "$env:ANDROID_NDK_HOME/toolchains/llvm/prebuilt/windows-x86_64/bin"
+          $crossCompiler = Join-Path $toolchainBin "aarch64-linux-android35-clang++.cmd"
+          $clangCompiler = Join-Path $toolchainBin "clang++.exe"
+          if (-not (Test-Path $crossCompiler)) { throw "Android NDK Clang ARM64 cross compiler was not found at $crossCompiler" }
+          if (-not (Test-Path $clangCompiler)) { throw "Android NDK Clang compiler was not found at $clangCompiler" }
+          Write-Output "Android NDK Clang ARM64 cross compiler: $crossCompiler"
+          & $crossCompiler --version
+          Write-Output "Android NDK Clang compiler: $clangCompiler"
+          & $clangCompiler --version
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Decode signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { throw 'ANDROID_KEYSTORE_BASE64 is required' }
+          New-Item -ItemType Directory -Force .android-keystore | Out-Null
+          [IO.File]::WriteAllBytes('.android-keystore/aa-android-release-sign-keystore.jks', [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
+      - name: Configure and build APK/AAB
+        env:
+          BUILD_ROOT: D:/build
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-windows-target-arm64-android-release
+          cmake --build --preset host-x64-windows-target-arm64-android-release-build --target apk --parallel
+          cmake --build --preset host-x64-windows-target-arm64-android-release-build --target aab --parallel
+      - name: Align and sign release artifacts
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_PASSWORD)) { throw 'ANDROID_KEYSTORE_PASSWORD is required' }
+          $build = "D:/build/host-x64-windows-target-arm64-android-release"
+          cmake --build "$build" --config Release --target android_align_and_sign --parallel
+      - name: Locate signed APK and AAB
+        id: signedandroid
+        run: |
+          $build = "D:/build/host-x64-windows-target-arm64-android-release"
+          $signed = Get-ChildItem -Path $build -Directory -Recurse -Filter signed |
+            Where-Object { $_.Parent.Name -eq 'android-build' } |
+            Select-Object -First 1
+          if (-not $signed) { throw "No android-build/signed directory found under $build" }
+          Write-Output "Signed artifacts directory: $($signed.FullName)"
+          $apk = Get-ChildItem -Path $signed.FullName -File -Filter '*-release-aligned-signed.apk' | Select-Object -First 1
+          $aab = Get-ChildItem -Path $signed.FullName -File -Filter '*-release-signed.aab' | Select-Object -First 1
+          if (-not $apk) { throw "No *-release-aligned-signed.apk found under $($signed.FullName)" }
+          if (-not $aab) { throw "No *-release-signed.aab found under $($signed.FullName)" }
+          Write-Output "Signed APK: $($apk.FullName)"
+          Write-Output "Signed AAB: $($aab.FullName)"
+          $releaseApk = Join-Path $apk.DirectoryName "${{ github.ref_name }}-arm64-android-release.apk"
+          $releaseAab = Join-Path $aab.DirectoryName "${{ github.ref_name }}-arm64-android-release.aab"
+          Move-Item -LiteralPath $apk.FullName -Destination $releaseApk -Force
+          Move-Item -LiteralPath $aab.FullName -Destination $releaseAab -Force
+          Write-Output "Signed apk: $releaseApk"
+          Write-Output "Signed aab: $releaseAab"
+          "apk=$releaseApk" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "aab=$releaseAab" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-arm64-android-release
+          path: |
+            ${{ steps.signedandroid.outputs.apk }}
+            ${{ steps.signedandroid.outputs.aab }}
+          if-no-files-found: error
+
+  host-x64-windows-target-wasm32-emscripten-release:
+    name: host-x64-windows-target-wasm32-emscripten-release
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+          check-latest: true
+      - uses: lukka/get-cmake@latest
+      - name: Report CMake version
+        run: cmake --version
+      - name: Report CPack version
+        run: cpack --version
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Report MSVC compiler
+        run: |
+          $compiler = Get-Command cl.exe -ErrorAction Stop
+          Write-Output "MSVC compiler: $($compiler.Source)"
+          & $compiler.Source 2>&1 | Select-Object -First 2
+      - uses: emscripten-core/setup-emsdk@v16
+        with:
+          version: 4.0.7
+          actions-cache-folder: emsdk-cache
+      - name: Report Emscripten cross compiler
+        run: |
+          emcc --version
+          em++ --version
+      - name: Install vcpkg
+        run: |
+          # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
+          $vcpkgRoot = "D:/vcpkg"
+          git clone https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          if ($LASTEXITCODE -ne 0) { throw "Failed to clone vcpkg into $vcpkgRoot" }
+          git -C $vcpkgRoot checkout $env:VCPKG_BASELINE
+          if ($LASTEXITCODE -ne 0) { throw "Failed to check out vcpkg baseline $env:VCPKG_BASELINE" }
+          & "$vcpkgRoot/bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "Failed to bootstrap vcpkg" }
+          "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "EMSCRIPTEN_ROOT=$env:EMSDK/upstream/emscripten" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          & "$vcpkgRoot/vcpkg.exe" version
+      - name: Configure and build
+        env:
+          BUILD_ROOT: D:/build
+          VCPKG_INSTALLED_ROOT: D:/vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:/vcpkg-buildtrees
+        run: |
+          cmake --preset host-x64-windows-target-wasm32-emscripten-release
+          cmake --build --preset host-x64-windows-target-wasm32-emscripten-release-build --parallel
+          $build = "D:/build/host-x64-windows-target-wasm32-emscripten-release"
+          cmake --install $build --config Release
+          Compress-Archive -Path "$build/install/bin" -DestinationPath "$build/install/${{ github.ref_name }}-wasm32-emscripten-release.zip"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.ref_name }}-wasm32-emscripten-release
+          path: D:/build/host-x64-windows-target-wasm32-emscripten-release/install/${{ github.ref_name }}-wasm32-emscripten-release.zip
+          if-no-files-found: error
+
+  publish-release:
+    name: publish-release
+    needs:
+      - host-x64-windows-target-x64-windows-static-release
+      - host-arm64-osx-target-arm64-osx-release
+      - host-x64-linux-target-x64-linux-release
+      - host-arm64-linux-target-arm64-linux-release
+      - host-x64-windows-target-arm64-android-release
+      - host-x64-windows-target-wasm32-emscripten-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+      - name: Flatten artifacts
+        run: |
+          mkdir -p release-files
+          find artifacts -type f -exec mv -t release-files {} +
+          ls -hal release-files
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
