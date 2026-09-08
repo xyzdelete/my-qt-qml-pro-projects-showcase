@@ -23,7 +23,7 @@ jobs:
       run:
         shell: pwsh
     env:
-      VCPKG_DEFAULT_BINARY_CACHE: C:\vcpkg-bin-cache
+      VCPKG_DEFAULT_BINARY_CACHE: D:\vcpkg-bin-cache
       CMAKE_BUILD_PARALLEL_LEVEL: 1
       VCPKG_MAX_CONCURRENCY: 1
     steps:
@@ -57,7 +57,7 @@ jobs:
       - name: Install vcpkg
         run: |
           # Short root-level path avoids MAX_PATH (260) failures deep in qtdeclarative's nested sources
-          $vcpkgRoot = "C:\vcpkg"
+          $vcpkgRoot = "D:\vcpkg"
           if (Test-Path $vcpkgRoot) { Remove-Item -Recurse -Force $vcpkgRoot }
           New-Item -ItemType Directory -Force $env:VCPKG_DEFAULT_BINARY_CACHE | Out-Null
           Write-Output "vcpkg binary cache: $env:VCPKG_DEFAULT_BINARY_CACHE"
@@ -71,23 +71,23 @@ jobs:
           & "$vcpkgRoot\vcpkg.exe" version
       - name: Configure and build
         env:
-          VCPKG_INSTALLED_ROOT: C:\vcpkg-installed
-          VCPKG_BUILDTREES_ROOT: C:\vcpkg-buildtrees
+          VCPKG_INSTALLED_ROOT: D:\vcpkg-installed
+          VCPKG_BUILDTREES_ROOT: D:\vcpkg-buildtrees
         run: |
-          $env:BUILD_ROOT = "C:\build"
+          $env:BUILD_ROOT = "D:\build"
           cmake --preset host-x64-windows-target-x64-windows-static-release
           cmake --build --preset host-x64-windows-target-x64-windows-static-release-build --parallel
       - name: Package NSIS and ZIP
         run: |
-          $build = "C:\build\host-x64-windows-target-x64-windows-static-release"
+          $build = "D:\build\host-x64-windows-target-x64-windows-static-release"
           cmake --install $build --config Release
           cpack --config "$build\CPackConfig.cmake" -C Release
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ github.ref_name }}-x64-windows
           path: |
-            C:\build\host-x64-windows-target-x64-windows-static-release\*.zip
-            C:\build\host-x64-windows-target-x64-windows-static-release\*.exe
+            D:\build\host-x64-windows-target-x64-windows-static-release\*.zip
+            D:\build\host-x64-windows-target-x64-windows-static-release\*.exe
           if-no-files-found: error
 
   host-arm64-osx-target-arm64-osx-release:
