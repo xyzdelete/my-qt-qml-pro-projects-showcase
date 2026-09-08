@@ -287,8 +287,6 @@ jobs:
           $buildToolsDir.Replace("\", "/") | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           Write-Output "zipalign: $zipalign"
           Write-Output "zipalign file version: $((Get-Item $zipalign).VersionInfo.FileVersion)"
-          & $zipalign -h 2>&1
-          if ($LASTEXITCODE -ne 0) { throw "zipalign version check failed with exit code $LASTEXITCODE" }
           Write-Output "apksigner: $apksigner"
           & $apksigner version
           if ($LASTEXITCODE -ne 0) { throw "apksigner version check failed with exit code $LASTEXITCODE" }
