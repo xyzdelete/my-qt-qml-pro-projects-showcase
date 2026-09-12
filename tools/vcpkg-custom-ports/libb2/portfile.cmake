@@ -35,7 +35,6 @@ else()
     OPTIONS
     --disable-native
     ax_cv_check_cflags___O3=no
-    lt_cv_deplibs_check_method=pass_all
   )
 
   vcpkg_make_install()
