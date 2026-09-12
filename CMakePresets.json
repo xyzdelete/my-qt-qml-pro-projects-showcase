@@ -206,6 +206,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-ios",
         "VCPKG_HOST_TRIPLET": "arm64-osx-release",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/tools/vcpkg-custom-ports",
         "VCPKG_CMAKE_CONFIGURE_OPTIONS_QTBASE": "-DFEATURE_system_libb2=OFF",
         "CMAKE_SYSTEM_NAME": "iOS",
         "CMAKE_OSX_SYSROOT": "iphoneos",
@@ -225,6 +226,7 @@
       "inherits": "osx-base",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-ios-simulator",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/tools/vcpkg-custom-ports",
         "VCPKG_CMAKE_CONFIGURE_OPTIONS_QTBASE": "-DFEATURE_system_libb2=OFF",
         "CMAKE_SYSTEM_NAME": "iOS",
         "CMAKE_OSX_SYSROOT": "iphonesimulator",

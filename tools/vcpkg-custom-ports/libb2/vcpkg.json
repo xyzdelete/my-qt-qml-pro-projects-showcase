@@ -1,0 +1,6 @@
+{
+  "name": "libb2",
+  "version": "0.98.1",
+  "port-version": 7,
+  "description": "BLAKE2 cryptographic hash library (iOS compatibility overlay)"
+}
